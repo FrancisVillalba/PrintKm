@@ -246,8 +246,18 @@
             const isEditingRecord = state.editing?.[config.id] !== undefined && state.editing?.[config.id] !== null;
             config.fields.forEach(field => setFieldValue(field, record));
             form.querySelector("[data-save-label]").textContent = isEditingRecord ? "Guardar" : "Crear";
+            config.formRendered?.({ form, record, options: state.options });
         }
 
+        function formatAdminMoney(value) {
+            const digits = String(value ?? "").replace(/\D/g, "");
+            return digits ? Number(digits).toLocaleString("es-PY") : "";
+        }
+
+        function parseAdminMoney(value) {
+            const digits = String(value ?? "").replace(/\D/g, "");
+            return digits ? Number(digits) : 0;
+        }
         function setFieldValue(field, record) {
             const form = activeForm();
             const value = record[field.name] ?? field.defaultValue ?? "";
@@ -276,9 +286,11 @@
                 return;
             }
 
-            input.value = field.type === "date" && value
-                ? String(value).slice(0, 10)
-                : value;
+            input.value = field.type === "money"
+                ? formatAdminMoney(value)
+                : field.type === "date" && value
+                    ? String(value).slice(0, 10)
+                    : value;
         }
 
         function populateSelect(field, value) {
@@ -383,8 +395,10 @@
 
                 if (field.type === "checkbox") {
                     payload[field.name] = input.checked;
+                } else if (field.type === "money") {
+                    payload[field.name] = parseAdminMoney(input.value);
                 } else if (field.type === "number") {
-                    payload[field.name] = input.value === "" ? null : Number(input.value);
+                    payload[field.name] = input.value === "" ? (field.emptyValue ?? null) : Number(input.value);
                 } else if (field.type === "select") {
                     payload[field.name] = input.value === "" ? null : coerceOptionValue(input.value);
                 } else {
@@ -455,6 +469,13 @@
         });
 
         crudPanel.addEventListener("input", event => {
+            modules[state.module]?.formChanged?.({ form: activeForm(), target: event.target, options: state.options });
+
+            if (event.target.matches("[data-money]")) {
+                event.target.value = formatAdminMoney(event.target.value);
+                return;
+            }
+
             if (!event.target.matches("[data-multiselect-search]")) {
                 return;
             }
@@ -464,6 +485,10 @@
             control.querySelectorAll("[data-toggle-multiselect]").forEach(option => {
                 option.hidden = query && !option.dataset.search.includes(query);
             });
+        });
+
+        crudPanel.addEventListener("change", event => {
+            modules[state.module]?.formChanged?.({ form: activeForm(), target: event.target, options: state.options });
         });
 
         document.addEventListener("click", event => {

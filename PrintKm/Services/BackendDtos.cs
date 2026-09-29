@@ -211,7 +211,7 @@ public record UsuarioDto(
     string? Perfiles,
     bool? Estado);
 
-public record ProductoDto(int Id, string Nombre, decimal PrecioBase, decimal PrecioMenor, int? MaquinaId, string? Maquina, bool Estado);
+public record ProductoDto(int Id, string Nombre, decimal PrecioBase, decimal PrecioMenor, decimal CompraMinimaCm, int? MaquinaId, string? Maquina, bool Estado);
 
 public record ProductoComisionDto(
     int Id,
@@ -219,10 +219,8 @@ public record ProductoComisionDto(
     string? Producto,
     int PerfilId,
     string? Perfil,
-    decimal MontoPorMetro,
-    bool Estado,
-    DateTime? FechaDesde,
-    DateTime? FechaHasta);
+    decimal Porcentaje,
+    bool Estado);
 
 public record GrupoVentaDto(
     int Id,
@@ -273,7 +271,7 @@ public record GrupoVentaDetalleEstadoDto(
     string EstadoItem,
     string EstadoItemNombre);
 
-public record TipoMaquinaDto(int Id, string Nombre, bool Estado);
+public record TipoMaquinaDto(int Id, string Nombre, decimal MetaMensual, bool Estado);
 
 public record PedidoFormOptionsDto(
     IEnumerable<ClienteDto> Clientes,
@@ -490,7 +488,14 @@ public record ReporteClienteDeudaPedidoDto(
     decimal TotalVenta,
     decimal MontoPagado,
     decimal SaldoPendiente,
-    string EstadoPago);
+    string EstadoPago,
+    IEnumerable<ReporteClienteComprobanteDto> ComprobantesTransferencia);
+
+public record ReporteClienteComprobanteDto(
+    DateTime Fecha,
+    decimal Monto,
+    string Ruta,
+    string Nombre);
 
 public record ReporteResumenGerencialDto(
     DateTime FechaDesde,
@@ -592,6 +597,8 @@ public record VentaImpresionCompletaUpdateRequest(
     string? MetodoEntrega,
     bool Reposicion,
     string? EstadoVentaId,
+    DateTime? FechaModificacion,
+    bool CambiarEstado,
     IEnumerable<VentaImpresionDetalleUpdateRequest> Detalles);
 
 public record ActualizarPagoVentaRequest(
@@ -648,6 +655,7 @@ public record VentaImpresionCabDto(
     string? EstadoPagadoId,
     string? EstadoPagado,
     DateTime? FechaCreacion,
+    DateTime? FechaModificacion,
     DateTime? FechaEntrega,
     string? ComprobantePago,
     string? ComprobantePagoNombre,
@@ -676,7 +684,8 @@ public record VentaImpresionDetDto(
     string? Observacion,
     string EstadoItem,
     string EstadoItemNombre,
-    bool? CheckImpresion);
+    bool? CheckImpresion,
+    DateTime? FechaModificacion);
 
 public record ImpresionArchivoDto(
     int DetalleId,

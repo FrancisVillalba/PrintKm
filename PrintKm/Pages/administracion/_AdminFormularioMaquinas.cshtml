@@ -1,7 +1,7 @@
 <section class="admin-panel" data-module-panel="maquinas" hidden>
     <div class="admin-panel-header"><div><h2>Tipos de maquina</h2><p>Maquinas o procesos productivos.</p></div><button class="admin-primary new-record-button" type="button"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14" /><path d="M5 12h14" /></svg><span>Nuevo</span></button></div>
-    <form class="admin-form" data-admin-form><label class="admin-field">Nombre<input data-field="nombre" type="text" required /></label><label class="admin-check admin-check-field">Activo<input data-field="estado" type="checkbox" checked /></label><div class="admin-form-actions"><div class="admin-form-buttons"><button class="admin-secondary cancel-record-button" type="button">Cancelar</button><button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button></div></div></form>
-    <partial name="_AdminFormularioTabla" model='@(new[] { "Nombre", "Estado" })' />
+    <form class="admin-form" data-admin-form><label class="admin-field">Nombre<input data-field="nombre" type="text" required /></label><label class="admin-field">Meta mensual (Gs.)<input data-field="metaMensual" type="number" min="0" step="1" value="0" /></label><label class="admin-check admin-check-field">Activo<input data-field="estado" type="checkbox" checked /></label><div class="admin-form-actions"><div class="admin-form-buttons"><button class="admin-secondary cancel-record-button" type="button">Cancelar</button><button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button></div></div></form>
+    <partial name="_AdminFormularioTabla" model='@(new[] { "Nombre", "Meta mensual (Gs.)", "Estado" })' />
 </section>
 <script>
     window.adminModuleDefinitions = window.adminModuleDefinitions || {};
@@ -9,9 +9,10 @@
     title: "Tipos de maquina",
     help: "Maquinas o procesos productivos.",
     id: "id",
-    columns: [["nombre", "Nombre"], ["estado", "Estado", value => value ? "Activo" : "Inactivo"]],
+    columns: [["nombre", "Nombre"], ["metaMensual", "Meta mensual (Gs.)", value => Number(value || 0).toLocaleString("es-PY")], ["estado", "Estado", value => value ? "Activo" : "Inactivo"]],
     fields: [
         { name: "nombre", label: "Nombre", required: true },
+        { name: "metaMensual", label: "Meta mensual (Gs.)", type: "number", defaultValue: 0, emptyValue: 0 },
         { name: "estado", label: "Activo", type: "checkbox", defaultValue: true }
     ]
 };

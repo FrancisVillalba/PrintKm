@@ -18,6 +18,10 @@
                 <option value="PENDIENTE_PARCIAL">Parcial y pendiente</option>
             </select>
         </label>
+        <label for="debt-payment-method">
+            Forma de pago
+            <select id="debt-payment-method"><option value="">Todas</option></select>
+        </label>
         <label for="debt-seller">
             Vendedor
             <select id="debt-seller"><option value="">Todos</option></select>
@@ -41,6 +45,22 @@
 </section>
 
 <script>
+    function transferProofUrl(proof) {
+        const params = new URLSearchParams({ ruta: proof.ruta, inline: "true" });
+        if (proof.nombre) params.set("nombreDescarga", proof.nombre);
+        return `/api/archivos/download?${params.toString()}`;
+    }
+
+    function renderTransferProofs(pedido) {
+        const proofs = pedido.comprobantesTransferencia || [];
+        if (!proofs.length) return `<span class="reports-no-proof">Sin comprobante</span>`;
+        return `<div class="reports-proof-list">${proofs.map((proof, index) => {
+            const label = `Comprobante${proofs.length > 1 ? ` ${index + 1}` : ""}: ${formatDate(proof.fecha)} · ${formatMoney(proof.monto)}`;
+            return `<a class="reports-proof-card" href="${escapeHtml(transferProofUrl(proof))}" target="_blank" rel="noopener" title="${escapeHtml(label)}" aria-label="Abrir ${escapeHtml(label)}">
+                <span class="reports-proof-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M9.5 13h5M9.5 17h5"/></svg></span>
+            </a>`;
+        }).join("")}</div>`;
+    }
     function renderCustomerDebtReport(report) {
         const clientes = report.clientes || [];
         customerDebtKpis.innerHTML = `
@@ -49,7 +69,7 @@
             <article><div class="reports-card-info"><span>Total pagado</span><strong>${formatMoney(report.totalPagado)}</strong><small>De ${formatMoney(report.totalVendido)} vendidos</small></div></article>`;
         customerDebtBody.innerHTML = clientes.length
             ? clientes.map(cliente => `
-                <tr>
+                <tr class="reports-customer-row">
                     <td><strong>${escapeHtml(cliente.cliente)}</strong></td><td>${escapeHtml(cliente.telefono || "-")}</td>
                     <td>${cliente.cantidadPedidos}</td><td>${formatMoney(cliente.totalVendido)}</td>
                     <td>${formatMoney(cliente.totalPagado)}</td><td><strong>${formatMoney(cliente.saldoPendiente)}</strong></td>
@@ -58,17 +78,17 @@
                     <td><button class="reports-detail-button" type="button" data-debt-client="${cliente.clienteId}">Ver detalle</button></td>
                 </tr>
                 <tr data-debt-detail="${cliente.clienteId}" hidden>
-                    <td colspan="9">
+                    <td colspan="9" class="reports-customer-detail-cell">
                         <table class="reports-table reports-inner-table">
-                            <thead><tr><th>Pedido</th><th>Fecha</th><th>Vendedor</th><th>Total</th><th>Pagado</th><th>Saldo</th><th>Estado</th></tr></thead>
+                            <thead><tr><th>Pedido</th><th>Fecha</th><th>Vendedor</th><th>Total</th><th>Pagado</th><th>Saldo</th><th>Estado</th><th>Comprobantes</th></tr></thead>
                             <tbody>${(cliente.pedidos || []).map(pedido => `
-                                <tr><td>#${pedido.pedidoId}</td><td>${formatDate(pedido.fecha)}</td><td>${escapeHtml(pedido.vendedor || "Sin vendedor")}</td>
+                                <tr class="reports-order-row"><td><span class="reports-order-number">#${pedido.pedidoId}</span></td><td>${formatDate(pedido.fecha)}</td><td>${escapeHtml(pedido.vendedor || "Sin vendedor")}</td>
                                 <td>${formatMoney(pedido.totalVenta)}</td><td>${formatMoney(pedido.montoPagado)}</td>
-                                <td><strong>${formatMoney(pedido.saldoPendiente)}</strong></td><td>${escapeHtml(pedido.estadoPago)}</td></tr>`).join("")}</tbody>
+                                <td><strong>${formatMoney(pedido.saldoPendiente)}</strong></td><td>${escapeHtml(pedido.estadoPago)}</td><td>${renderTransferProofs(pedido)}</td></tr>`).join("")}</tbody>
                         </table>
                     </td>
                 </tr>`).join("")
-            : `<tr><td colspan="9">No hay ventas de clientes para los filtros seleccionados.</td></tr>`;
+            : `<tr><td colspan="9" class="reports-customer-detail-cell">No hay ventas de clientes para los filtros seleccionados.</td></tr>`;
     }
 
     document.getElementById("customer-debt-body").addEventListener("click", event => {
@@ -77,7 +97,7 @@
         const detail = document.querySelector(`[data-debt-detail="${button.dataset.debtClient}"]`);
         if (detail) {
             detail.hidden = !detail.hidden;
-            button.textContent = detail.hidden ? "Ver detalle" : "Ocultar";
+            button.textContent = detail.hidden ? "Ver detalle" : "Ocultar detalle"; button.setAttribute("aria-expanded", String(!detail.hidden));
         }
     });
 </script>

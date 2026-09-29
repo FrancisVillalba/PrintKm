@@ -1,0 +1,151 @@
+/* PrintKM: black wordmark, sky-blue accents, neutral surfaces. */
+:root {
+  --printkm-ink: #1f2937;
+  --printkm-accent: #0ea5e9;
+  --printkm-accent-dark: #075985;
+  --printkm-soft: #e0f2fe;
+  accent-color: var(--printkm-accent-dark);
+}
+body { color: var(--printkm-ink); }
+.printkm-logo { display: block; width: 100%; height: auto; object-fit: contain; }
+.brand-logo { background: #fff; border-radius: 12px; padding: 0 12px; box-sizing: border-box; }
+.brand-panel .brand-logo { width: min(360px, 100%); }
+.app-sidebar .brand-logo { width: 100%; max-width: 210px; align-self: center; flex-shrink: 0; }
+.app-sidebar { background: #111827; }
+.app-sidebar nav button.active, .app-sidebar nav button:hover,
+.app-sidebar nav .sidebar-group-title.active, .app-sidebar nav .sidebar-group-title:hover {
+  color: #38bdf8; background: #1f2937;
+}
+.app-sidebar-logout { color: #e0f2fe; background: #1f2937; }
+.brand-panel { background: radial-gradient(ellipse at top right, #0c4a6e 0%, #111827 65%); }
+.brand-copy .eyebrow { color: #38bdf8; }
+.login-form button, .primary-button, .save-button {
+  background: #075985; color: #fff; box-shadow: 0 8px 20px rgb(56 189 248 / 18%);
+}
+.login-form button:hover, .primary-button:hover, .save-button:hover { background: #0c4a6e; color: #fff; }
+.login-form input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgb(56 189 248 / 22%); }
+:focus-visible { outline: 2px solid #0369a1; outline-offset: 3px; }
+.app-system-footer strong { color: #111827; }
+@media (max-width: 1080px) { .app-sidebar .brand-logo { width: 170px; } }
+@media (max-width: 620px) { .app-sidebar .brand-logo { width: 190px; align-self: flex-start; } }
+/* Dashboard cards retain their distinct, saturated workflow colors. */
+.summary-tile.tile-green { background: linear-gradient(135deg, #16803d, #166534); }
+.summary-tile.tile-blue { background: linear-gradient(135deg, #0284c7, #0369a1); }
+.summary-tile.tile-purple { background: linear-gradient(135deg, #8055c9, #6536ad); }
+.summary-tile.tile-orange { background: linear-gradient(135deg, #bc590a, #9a4208); }
+.summary-tile.tile-teal { background: linear-gradient(135deg, #0891b2, #0e7490); }
+.summary-tile.tile-red { background: linear-gradient(135deg, #dc3545, #b42335); }
+.summary-tile { color: #fff; }
+.summary-tile p, .summary-tile strong, .summary-tile small { color: #fff; }
+.summary-tile .summary-icon { color: #fff; background: rgb(255 255 255 / 16%); }
+/* Neutral page backgrounds throughout PrintKM. */
+:root { --printkm-page-background: #f3f4f6; }
+html, body, body.modal-page-body,
+.dashboard-shell, .orders-shell, .entry-shell, .clients-shell,
+.client-entry-shell, .admin-shell, .delivery-shell, .reports-shell,
+.state-mock-shell, .app-content, .dashboard-shell .dashboard-analytics,
+.order-form-modal-dialog, .order-form-modal-frame {
+  background: var(--printkm-page-background);
+}
+@media (width > 1080px) {
+  .dashboard-shell, .orders-shell, .entry-shell, .clients-shell,
+  .client-entry-shell, .admin-shell, .delivery-shell, .reports-shell,
+  .state-mock-shell {
+    background: linear-gradient(to right, #111827 0, #111827 232px,
+      var(--printkm-page-background) 232px, var(--printkm-page-background) 100%);
+  }
+}
+
+/* Calm surfaces and consistent visual hierarchy. */
+body { font-family: "Segoe UI", Arial, sans-serif; color: #1f2937; }
+.app-topbar, .app-system-footer { background: #fff; border-color: #e5e7eb; box-shadow: none; }
+.app-user-button, .app-notification-button { background: #fff; border-color: #d1d5db; color: #334155; box-shadow: none; }
+.app-user-name { font-weight: 600; }
+.app-sidebar nav button, .app-sidebar nav .sidebar-group-title { font-weight: 500; }
+.app-sidebar nav button.active, .app-sidebar nav .sidebar-group-title.active { font-weight: 600; }
+.admin-modules, .admin-panel {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(17 24 39 / 3%);
+}
+.admin-modules { padding: 10px; }
+.admin-modules button { color: #475569; font-size: .9rem; font-weight: 500; line-height: 1.45; border-radius: 7px; }
+.admin-modules button:hover { background: #f3f4f6; color: #1f2937; }
+.admin-modules button.active { background: #f0f9ff; color: #075985; font-weight: 600; box-shadow: inset 3px 0 #0284c7; }
+.admin-panel-header h2 { color: #1f2937; font-size: 1.4rem; font-weight: 650; letter-spacing: -.02em; }
+.admin-panel-header p { color: #64748b; font-size: .9rem; line-height: 1.6; }
+.admin-panel form.admin-form, .admin-panel .admin-list-toolbar, .admin-access-filter {
+  background: #fafafa; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: none;
+}
+.admin-panel .admin-form-actions, .admin-screen-header { border-color: #e5e7eb; }
+.admin-panel .admin-form label, .admin-panel .admin-list-toolbar label,
+.admin-panel .admin-access-filter label, .admin-panel .admin-multi-field legend {
+  color: #374151; font-size: .85rem; font-weight: 600;
+}
+.admin-panel .admin-field > span { color: #6b7280; font-weight: 400; font-size: .78rem; }
+.admin-panel .admin-form input:not([type="checkbox"]), .admin-panel .admin-form select,
+.admin-panel .admin-form textarea, .admin-panel .admin-list-toolbar input,
+.admin-panel .admin-access-filter select, .admin-panel .admin-multiselect-button,
+.admin-panel .admin-multiselect-search {
+  color: #1f2937; background: #fff; border-color: #d1d5db; font-size: .9rem; font-weight: 400; box-shadow: none;
+}
+.admin-panel input::placeholder { color: #6b7280; font-weight: 400; }
+.admin-panel input:focus, .admin-panel select:focus, .admin-panel textarea:focus,
+.admin-panel .admin-multiselect-button[aria-expanded="true"] {
+  border-color: #0284c7; outline: 2px solid rgb(2 132 199 / 15%); outline-offset: 1px;
+}
+.admin-panel button { font-weight: 600; font-size: .875rem; }
+.admin-panel .admin-primary { background: #075985; color: #fff; border: 1px solid #075985; box-shadow: none; }
+.admin-panel .admin-primary:hover { background: #0c4a6e; border-color: #0c4a6e; }
+.admin-panel .admin-secondary, .admin-panel .admin-row-actions button,
+.admin-panel .admin-pagination-actions button {
+  background: #fff; color: #475569; border: 1px solid #d1d5db; box-shadow: none;
+}
+.admin-panel .admin-secondary:hover, .admin-panel .admin-row-actions button:hover,
+.admin-panel .admin-pagination-actions button:hover { background: #f3f4f6; color: #1f2937; border-color: #9ca3af; }
+.admin-panel .admin-row-actions button.danger { color: #b42335; background: #fff; border-color: #f1d1d5; }
+.admin-panel .admin-row-actions button.danger:hover { background: #fff1f2; border-color: #e7a5af; }
+.admin-panel .admin-table th { color: #6b7280; background: #fafafa; font-size: .72rem; font-weight: 600; letter-spacing: .04em; }
+.admin-panel .admin-table th, .admin-panel .admin-table td { border-color: #e5e7eb; }
+.admin-panel .admin-table td { color: #374151; font-size: .875rem; }
+.admin-panel .admin-table tbody tr:hover { background: #f9fafb; }
+.admin-panel .commission-preview { background: #fff; border-color: #e5e7eb; }
+.admin-panel .commission-preview-heading { border-color: #e5e7eb; }
+.admin-panel .commission-preview-heading small, .admin-panel .commission-preview-values span { color: #64748b; }
+.admin-panel .commission-preview-total span { color: #fff; }
+
+/* Shared PrintKM surfaces and controls. */
+body { color: #374151; }
+.app-content :where(h1, h2, h3) { color: #1f2937; }
+.app-content :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  background-color: #fff; color: #374151; border-color: #d1d5db;
+}
+.app-content :where(input, select, textarea):focus { border-color: #0ea5e9; }
+.orders-filters, .clients-filters, .reports-filters, .admin-panel form.admin-form,
+.admin-panel .admin-list-toolbar, .admin-access-filter {
+  background: #fff; border-color: #e5e7eb; box-shadow: none;
+}
+.orders-card, .clients-card, .analytics-card, .admin-panel, .admin-modules {
+  background-color: #fff; border-color: #e5e7eb;
+}
+.primary-button, .save-button, .admin-primary { background: #075985; color: #fff; }
+.primary-button:hover, .save-button:hover, .admin-primary:hover { background: #0c4a6e; }
+
+/* All editable fields use neutral gray surfaces, including custom selectors. */
+:is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]), select, textarea, .client-select2-button, .admin-multiselect-button) {
+  background-color: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+  color: #374151 !important;
+  box-shadow: none !important;
+}
+:is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]), select, textarea, .client-select2-button, .admin-multiselect-button):focus,
+.client-select2-button[aria-expanded="true"], .admin-multiselect-button[aria-expanded="true"] {
+  border-color: #6b7280 !important;
+  outline: 2px solid #9ca3af !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
+}
+.client-select2-button::after, .admin-multiselect-button::after { border-color: #6b7280; }
+.client-select2-dropdown, .admin-multiselect-dropdown { border-color: #d1d5db; }
+.client-select2-option:hover, .client-select2-option.is-selected,
+.admin-multiselect-option:hover, .admin-multiselect-option.is-selected { background: #f3f4f6; color: #374151; }
+input[type="checkbox"], input[type="radio"] { accent-color: #6b7280; }

@@ -1,36 +1,61 @@
 <section class="admin-panel" data-module-panel="productoComisiones" hidden>
-    <div class="admin-panel-header"><div><h2>Comisiones por producto</h2><p>Define la comision por metro de cada producto segun el perfil del vendedor.</p></div><button class="admin-primary new-record-button" type="button"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14" /><path d="M5 12h14" /></svg><span>Nuevo</span></button></div>
-    <form class="admin-form" data-admin-form>
-        <label class="admin-field">Producto<select data-field="productoId" data-source="productos" required><option value="">Seleccionar</option></select></label>
-        <label class="admin-field">Perfil<select data-field="perfilId" data-source="perfiles" required><option value="">Seleccionar</option></select></label>
-        <label class="admin-field">Monto por metro<input data-field="montoPorMetro" type="number" value="0" /></label>
-        <label class="admin-field">Fecha desde<input data-field="fechaDesde" type="date" /></label>
-        <label class="admin-field">Fecha hasta<input data-field="fechaHasta" type="date" /></label>
-        <label class="admin-check admin-check-field">Activo<input data-field="estado" type="checkbox" checked /></label><div class="admin-form-actions"><div class="admin-form-buttons"><button class="admin-secondary cancel-record-button" type="button">Cancelar</button><button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button></div></div>
+    <div class="admin-panel-header"><div><h2>Comisiones por producto</h2><p>Configurá la comisión correspondiente a cada producto y perfil.</p></div><button class="admin-primary new-record-button" type="button"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14" /><path d="M5 12h14" /></svg><span>Nuevo</span></button></div>
+    <form class="admin-form commission-form" data-admin-form>
+        <div class="commission-editor">
+            <div class="commission-fields">
+                <label class="admin-field">Producto<select data-field="productoId" data-source="productos" required><option value="">Seleccionar</option></select></label>
+                <label class="admin-field">Perfil<select data-field="perfilId" data-source="perfiles" required><option value="">Seleccionar</option></select></label>
+                <label class="admin-field">Comisión (%)<div class="commission-percent-input"><input data-field="porcentaje" type="number" min="0" max="100" step="0.01" value="0" required /><span>%</span></div></label>
+                <label class="commission-status">Estado <span><input data-field="estado" type="checkbox" checked /> Comisión activa</span></label>
+            </div>
+            <aside class="commission-preview" data-commission-preview>
+                <div class="commission-preview-heading">
+                    <strong>Cálculo estimado</strong>
+                    <small>Según el precio base por metro</small>
+                </div>
+                <div class="commission-preview-values">
+                    <div><span>Precio base</span><strong data-commission-price>Gs. 0</strong></div>
+                    <div><span>Porcentaje</span><strong data-commission-percentage>0%</strong></div>
+                    <div class="commission-preview-total"><span>Comisión</span><strong data-commission-result>Gs. 0</strong></div>
+                </div>
+            </aside>
+        </div>
+        <div class="admin-form-actions"><div class="admin-form-buttons"><button class="admin-secondary cancel-record-button" type="button">Cancelar</button><button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button></div></div>
     </form>
-    <partial name="_AdminFormularioTabla" model='@(new[] { "Producto", "Perfil", "Monto por metro", "Desde", "Hasta", "Estado" })' />
+    <partial name="_AdminFormularioTabla" model='@(new[] { "Producto", "Perfil", "Porcentaje", "Estado" })' />
 </section>
 <script>
     window.adminModuleDefinitions = window.adminModuleDefinitions || {};
     window.adminModuleDefinitions.productoComisiones = {
-                title: "Comisiones por producto",
-                help: "Define la comision por metro de cada producto segun el perfil del vendedor.",
-                id: "id",
-                columns: [
-                    ["producto", "Producto"],
-                    ["perfil", "Perfil"],
-                    ["montoPorMetro", "Monto por metro"],
-                    ["fechaDesde", "Desde", value => formatDate(value)],
-                    ["fechaHasta", "Hasta", value => formatDate(value)],
-                    ["estado", "Estado", value => value ? "Activo" : "Inactivo"]
-                ],
-                fields: [
-                    { name: "productoId", label: "Producto", type: "select", source: "productos", value: "id", text: "nombre", required: true },
-                    { name: "perfilId", label: "Perfil", type: "select", source: "perfiles", value: "id", text: "nombre", required: true },
-                    { name: "montoPorMetro", label: "Monto por metro", type: "number", defaultValue: 0 },
-                    { name: "fechaDesde", label: "Fecha desde", type: "date" },
-                    { name: "fechaHasta", label: "Fecha hasta", type: "date" },
-                    { name: "estado", label: "Activo", type: "checkbox", defaultValue: true }
-                ]
-            };
+        title: "Comisiones por producto",
+        help: "Configurá la comisión correspondiente a cada producto y perfil.",
+        id: "id",
+        columns: [
+            ["producto", "Producto"],
+            ["perfil", "Perfil"],
+            ["porcentaje", "Porcentaje", value => `${Number(value || 0).toLocaleString("es-PY", { maximumFractionDigits: 2 })} %`],
+            ["estado", "Estado", value => value ? "Activo" : "Inactivo"]
+        ],
+        fields: [
+            { name: "productoId", label: "Producto", type: "select", source: "productos", value: "id", text: "nombre", required: true },
+            { name: "perfilId", label: "Perfil", type: "select", source: "perfiles", value: "id", text: "nombre", required: true },
+            { name: "porcentaje", label: "Comisión (%)", type: "number", defaultValue: 0 },
+            { name: "estado", label: "Activo", type: "checkbox", defaultValue: true }
+        ],
+        formRendered: updateCommissionPreview,
+        formChanged: updateCommissionPreview
+    };
+
+    function updateCommissionPreview({ form, options }) {
+        if (!form) return;
+        const productId = Number(form.querySelector('[data-field="productoId"]')?.value || 0);
+        const percentage = Number(form.querySelector('[data-field="porcentaje"]')?.value || 0);
+        const product = (options.productos || []).find(item => Number(item.id) === productId);
+        const price = Number(product?.precioBase || 0);
+        const commission = price * percentage / 100;
+        const money = value => `Gs. ${Number(value || 0).toLocaleString("es-PY", { maximumFractionDigits: 0 })}`;
+        form.querySelector("[data-commission-price]").textContent = money(price);
+        form.querySelector("[data-commission-percentage]").textContent = `${percentage.toLocaleString("es-PY", { maximumFractionDigits: 2 })}%`;
+        form.querySelector("[data-commission-result]").textContent = money(commission);
+    }
 </script>

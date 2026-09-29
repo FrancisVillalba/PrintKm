@@ -16,9 +16,9 @@
   align-items: center;
   min-height: 32px;
   border-radius: 999px;
-  background: #e7f6f4;
+  background: #e0f2fe;
   padding: 0 14px;
-  color: #075f72;
+  color: #111827;
   font-weight: 850;
 }
 
@@ -42,9 +42,9 @@
 
 .control-download-button {
   width: 40px;
-  border: 1px solid #b9dfe2;
-  background: #e9f8f6;
-  color: #075f72;
+  border: 1px solid #bae6fd;
+  background: #e0f2fe;
+  color: #111827;
   padding: 0;
 }
 
@@ -105,7 +105,7 @@
 
 .control-modal-card {
   width: min(520px, 100%);
-  border: 1px solid #d7e5eb;
+  border: 1px solid #e0f2fe;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 22px 48px rgb(0 31 53 / 0.22);
@@ -130,17 +130,17 @@
 
 .control-modal-card h2 {
   margin: 4px 0 0;
-  color: #002840;
+  color: #111827;
   font-size: 24px;
 }
 
 .control-modal-close {
   width: 36px;
   height: 36px;
-  border: 1px solid #cfe0e7;
+  border: 1px solid #bae6fd;
   border-radius: 7px;
   background: #fff;
-  color: #075f72;
+  color: #111827;
   font-weight: 900;
   cursor: pointer;
 }
@@ -153,10 +153,10 @@
 .control-modal-card textarea {
   min-height: 130px;
   resize: vertical;
-  border: 1px solid #b9ccd8;
+  border: 1px solid #bae6fd;
   border-radius: 7px;
   padding: 12px 14px;
-  color: #001f35;
+  color: #111827;
   font: inherit;
   text-transform: none;
 }
@@ -229,16 +229,16 @@
   top: 16px;
   bottom: -2px;
   width: 2px;
-  background: #d7e5eb;
+  background: #e0f2fe;
 }
 
 .order-flow-event:last-child::before { display: none; }
-.order-flow-dot { width: 16px; height: 16px; margin-top: 3px; border: 4px solid #d8f0ed; border-radius: 50%; background: #087386; z-index: 1; }
-.order-flow-event-card { border: 1px solid #dce8ed; border-radius: 8px; background: #f9fbfc; padding: 14px 16px; }
+.order-flow-dot { width: 16px; height: 16px; margin-top: 3px; border: 4px solid #e0f2fe; border-radius: 50%; background: #075985; z-index: 1; }
+.order-flow-event-card { border: 1px solid #e0f2fe; border-radius: 8px; background: #f0f9ff; padding: 14px 16px; }
 .order-flow-event-heading { display: flex; justify-content: space-between; gap: 14px; margin-bottom: 9px; }
-.order-flow-event-heading strong { color: #002840; }
+.order-flow-event-heading strong { color: #111827; }
 .order-flow-event-heading time { color: #63788b; font-size: 12px; white-space: nowrap; }
-.order-flow-event-card p { margin: 5px 0; color: #496273; font-size: 14px; }
+.order-flow-event-card p { margin: 5px 0; color: #075985; font-size: 14px; }
 .order-flow-comment { margin-top: 10px; border-left: 3px solid #d7901f; border-radius: 4px; background: #fff7e8; padding: 10px 12px; color: #664b1e; font-size: 14px; }
 .orders-actions-inner { display: flex; justify-content: flex-end; gap: 4px; }
 .orders-icon-action {

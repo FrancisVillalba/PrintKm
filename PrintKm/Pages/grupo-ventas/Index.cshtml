@@ -126,7 +126,11 @@
         let currentSalesPage = 1;
 
         function formatMoney(value) {
-            return Number(value || 0).toLocaleString("es-PY");
+            return Math.round(Number(value || 0)).toLocaleString("es-PY", { maximumFractionDigits: 0 });
+        }
+
+        function formatCommission(value) {
+            return Math.round(Number(value || 0)).toLocaleString("es-PY", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         }
 
         function formatDate(value) {
@@ -182,13 +186,13 @@
                         <div><i style="width:${width}%"></i></div>
                         <strong>
                             ${formatMoney(item.totalVenta)}
-                            <small>Comision ${formatMoney(item.totalComision)}</small>
+                            <small>Comision ${formatCommission(item.totalComision)}</small>
                         </strong>
                     </div>`;
             }).join("") + `
                 <div class="team-summary-total">
                     <span>Total comision</span>
-                    <strong>${formatMoney(totalCommission)}</strong>
+                    <strong>${formatCommission(totalCommission)}</strong>
                 </div>`;
         }
 
@@ -276,7 +280,7 @@
                         <td class="team-sale-money team-sale-total">${formatMoney(item.totalVenta)}</td>
                         <td class="team-sale-money team-sale-paid">${formatMoney(item.totalPagado)}</td>
                         <td class="team-sale-meters">${Number(item.totalMetros || 0).toLocaleString("es-PY", { maximumFractionDigits: 2 })}</td>
-                        <td class="team-sale-money team-sale-commission">${formatMoney(item.totalComision)}</td>
+                        <td class="team-sale-money team-sale-commission">${formatCommission(item.totalComision)}</td>
                         <td class="orders-actions">
                             <div class="orders-actions-inner">
                                 <button class="orders-edit" type="button" data-view-team-sale="${item.pedidoId}">Ver</button>
@@ -288,7 +292,7 @@
             salesFoot.innerHTML = currentTeamSales.length
                 ? `<tr>
                     <td colspan="9"><strong>Total comision</strong></td>
-                    <td><strong>${formatMoney(totalCommission)}</strong></td>
+                    <td><strong>${formatCommission(totalCommission)}</strong></td>
                     <td></td>
                 </tr>`
                 : "";

@@ -37,7 +37,7 @@ public class ArchivosController : ControllerBase
     }
 
     [HttpGet("download")]
-    public async Task<IActionResult> Download([FromQuery] string ruta, [FromQuery] string? nombreDescarga = null, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Download([FromQuery] string ruta, [FromQuery] string? nombreDescarga = null, [FromQuery] bool inline = false, CancellationToken cancellationToken = default)
     {
         var query = $"ruta={Uri.EscapeDataString(ruta)}";
         if (!string.IsNullOrWhiteSpace(nombreDescarga))
@@ -51,6 +51,9 @@ public class ArchivosController : ControllerBase
             return StatusCode(StatusCodes.Status502BadGateway, new { message = "No se pudo descargar el archivo desde EvaluSystemBack." });
         }
 
-        return File(Convert.FromBase64String(file.Base64), file.ContentType, file.NombreArchivo);
+        var bytes = Convert.FromBase64String(file.Base64);
+        return inline
+            ? File(bytes, file.ContentType)
+            : File(bytes, file.ContentType, file.NombreArchivo);
     }
 }

@@ -1,11 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#062f36"/>
-  <g fill="none" stroke="#2fb5bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M32 11c7 7 7 15 0 24-7-9-7-17 0-24z"/>
-    <path d="M20 18c9 0 15 5 18 15-11 2-18-2-18-15z"/>
-    <path d="M44 18c-9 0-15 5-18 15 11 2 18-2 18-15z"/>
-    <path d="M15 34c8-7 17-7 27 0-10 8-19 8-27 0z"/>
-    <path d="M49 34c-8-7-17-7-27 0 10 8 19 8 27 0z"/>
-  </g>
-  <circle cx="32" cy="50" r="3" fill="#2fb5bd"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#111827"/><text x="32" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="800" fill="#38bdf8">KM</text></svg>

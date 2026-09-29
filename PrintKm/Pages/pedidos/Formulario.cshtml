@@ -321,6 +321,7 @@
         const stateDeleteAction = document.getElementById("state-delete-action");
         const orderBudgetAction = document.getElementById("order-budget-action");
         let loadedSaleStateId = "";
+        let loadedOrderVersion = null;
         let savedMontoEnvioTransportadora = null;
         let paymentProofs = [];
 
@@ -431,8 +432,9 @@
             return formOptions.productos.find(product => String(product.id) === String(productId));
         }
 
-        function minimumPurchaseQuantity() {
-            return Number(formOptions.compraMinimaCm) || 0.2;
+        function minimumPurchaseQuantity(productId) {
+            const product = getProduct(productId);
+            return Number(product?.compraMinimaCm) || 0.2;
         }
 
         function productPriceForQuantity(product, quantity) {
@@ -446,6 +448,13 @@
 
         function getMachine(machineId) {
             return formOptions.maquinas.find(machine => String(machine.id) === String(machineId));
+        }
+
+        function productsForMachine(machineId) {
+            if (!machineId) return [];
+
+            return formOptions.productos.filter(product =>
+                String(product.maquinaId || "") === String(machineId));
         }
 
         function findOptionId(items, expectedName) {
@@ -852,20 +861,6 @@
                     ${["RE", "DV"].includes(String(detail.stateItem || "").trim().toUpperCase()) && detail.observation ? `<div class="${String(detail.stateItem || "").trim().toUpperCase() === "DV" ? "detail-returned-comment" : "detail-rejected-comment"}">${escapeHtml(detail.observation)}</div>` : ""}
 
                     <div class="detail-grid">
-                        <label class="detail-field product-field">
-                            Producto
-                            <select data-id="${detail.id}" data-field="productId" ${detailReadonly ? "disabled" : ""}>
-                                ${selectOptions(
-                                    formOptions.productos.map(product => ({
-                                        value: product.id,
-                                        label: product.nombre
-                                    })),
-                                    detail.productId,
-                                    "Seleccionar producto"
-                                )}
-                            </select>
-                        </label>
-
                         <label class="detail-field machine-field">
                             Maquina
                             <select data-id="${detail.id}" data-field="machineId" ${detailReadonly ? "disabled" : ""}>
@@ -876,6 +871,20 @@
                                     })),
                                     detail.machineId,
                                     "Seleccionar maquina"
+                                )}
+                            </select>
+                        </label>
+
+                        <label class="detail-field product-field">
+                            Producto
+                            <select data-id="${detail.id}" data-field="productId" ${detailReadonly || !detail.machineId ? "disabled" : ""}>
+                                ${selectOptions(
+                                    productsForMachine(detail.machineId).map(product => ({
+                                        value: product.id,
+                                        label: product.nombre
+                                    })),
+                                    detail.productId,
+                                    detail.machineId ? "Seleccionar producto" : "Seleccione una maquina primero"
                                 )}
                             </select>
                         </label>
@@ -966,6 +975,19 @@
                     };
                 }
 
+                if (field === "machineId") {
+                    const selectedProduct = getProduct(detail.productId);
+                    const productBelongsToMachine = selectedProduct
+                        && String(selectedProduct.maquinaId || "") === String(value);
+
+                    return {
+                        ...detail,
+                        machineId: value,
+                        productId: productBelongsToMachine ? detail.productId : "",
+                        unitPrice: productBelongsToMachine ? detail.unitPrice : ""
+                    };
+                }
+
                 if (field === "quantity") {
                     const product = getProduct(detail.productId);
                     return {
@@ -978,18 +1000,26 @@
                 return { ...detail, [field]: value };
             });
 
+            const updatedDetail = details.find(detail => detail.id === id);
+
             if (event.type === "change"
                 && field === "quantity"
                 && numberValue(value) > 0
-                && numberValue(value) < minimumPurchaseQuantity()) {
-                showToast(`La compra minima es de ${minimumPurchaseQuantity().toLocaleString("es-PY", { minimumFractionDigits: 2 })} cm.`, "error");
+                && updatedDetail
+                && numberValue(value) < minimumPurchaseQuantity(updatedDetail.productId)) {
+                showToast(`La compra mínima para ${getProduct(updatedDetail.productId)?.nombre || "el producto seleccionado"} es de ${minimumPurchaseQuantity(updatedDetail.productId).toLocaleString("es-PY", { minimumFractionDigits: 2 })} cm.`, "error");
             }
 
             if (event.type === "input" && ["quantity", "unitPrice", "extraPrice"].includes(field)) {
-                const detail = details.find(item => item.id === id);
                 const output = detailList.querySelector(`[data-total-id="${id}"]`);
-                if (detail && output) {
-                    output.textContent = `Gs. ${detailTotal(detail).toLocaleString("es-PY")}`;
+                if (updatedDetail && field === "quantity") {
+                    const unitPriceInput = detailList.querySelector(`[data-id="${id}"][data-field="unitPrice"]`);
+                    if (unitPriceInput) {
+                        unitPriceInput.value = updatedDetail.unitPrice;
+                    }
+                }
+                if (updatedDetail && output) {
+                    output.textContent = `Gs. ${detailTotal(updatedDetail).toLocaleString("es-PY")}`;
                 }
                 updateEstimatedTotal();
                 return;
@@ -1090,6 +1120,7 @@
         let persistedPayment = null;
 
         function loadOrder(order) {
+            loadedOrderVersion = order.fechaModificacion || null;
             if (order.id) {
                 persistedPayment = {
                     formaPagoId: order.formaPagoId || "",
@@ -1435,6 +1466,8 @@
                 reposicion: document.getElementById("order-reposicion").checked,
                 metodoEntrega: deliveryMethodSelect.value || "DELIVERY",
                 estadoVentaId: isStateChange ? targetStateId : currentStateId,
+                fechaModificacion: loadedOrderVersion,
+                cambiarEstado: isStateChange,
                 detalles: details.map(detail => ({
                     id: detail.detailId,
                     productoId: Number(detail.productId),
@@ -1462,9 +1495,10 @@
                 return;
             }
 
-            if (payload.detalles.some(detail => detail.cantidad < minimumPurchaseQuantity())) {
+            const invalidMinimumDetail = payload.detalles.find(detail => detail.cantidad < minimumPurchaseQuantity(detail.productoId));
+            if (invalidMinimumDetail) {
                 saleStatusSelect.value = headerStateId;
-                showToast(`La compra minima es de ${minimumPurchaseQuantity().toLocaleString("es-PY", { minimumFractionDigits: 2 })} cm.`, "error");
+                showToast(`La compra mínima para ${getProduct(invalidMinimumDetail.productoId)?.nombre || "el producto seleccionado"} es de ${minimumPurchaseQuantity(invalidMinimumDetail.productoId).toLocaleString("es-PY", { minimumFractionDigits: 2 })} cm.`, "error");
                 return;
             }
 
@@ -1509,6 +1543,8 @@
                         }));
 
                         loadedSaleStateId = initialStateId || loadedSaleStateId;
+                        loadedOrderVersion = createdOrder.fechaModificacion || loadedOrderVersion;
+                        payload.fechaModificacion = loadedOrderVersion;
                         window.history.replaceState(null, "", `${window.location.pathname}?id=${orderId}`);
 
                         return await sendOrder(`/api/pedidos/${orderId}`, "PUT", payload);
@@ -1534,6 +1570,9 @@
                 }
 
                 showToast(message, "error");
+                if (response.status === 409) {
+                    await reloadCurrentOrder();
+                }
                 return;
             }
 

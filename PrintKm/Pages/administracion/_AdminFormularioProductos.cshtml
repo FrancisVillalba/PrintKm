@@ -2,12 +2,13 @@
     <div class="admin-panel-header"><div><h2>Productos</h2><p>Productos disponibles para los pedidos.</p></div><button class="admin-primary new-record-button" type="button"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14" /><path d="M5 12h14" /></svg><span>Nuevo</span></button></div>
     <form class="admin-form" data-admin-form>
         <label class="admin-field">Nombre<input data-field="nombre" type="text" required /></label>
-        <label class="admin-field">Precio base<input data-field="precioBase" type="number" value="0" /></label>
-        <label class="admin-field">Precio menor<input data-field="precioMenor" type="number" value="200000" /></label>
+        <label class="admin-field">Precio base<input data-field="precioBase" type="text" inputmode="numeric" data-money value="0" /></label>
+        <label class="admin-field">Precio menor<input data-field="precioMenor" type="text" inputmode="numeric" data-money value="200.000" /></label>
+        <label class="admin-field">Compra mínima (cm)<input data-field="compraMinimaCm" type="number" min="0.01" step="0.01" value="0.20" /></label>
         <label class="admin-field">Maquina<select data-field="maquinaId" data-source="maquinas"><option value="">Seleccionar</option></select></label>
         <label class="admin-check admin-check-field">Activo<input data-field="estado" type="checkbox" checked /></label><div class="admin-form-actions"><div class="admin-form-buttons"><button class="admin-secondary cancel-record-button" type="button">Cancelar</button><button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button></div></div>
     </form>
-    <partial name="_AdminFormularioTabla" model='@(new[] { "Nombre", "Precio base", "Precio menor", "Maquina", "Estado" })' />
+    <partial name="_AdminFormularioTabla" model='@(new[] { "Nombre", "Precio base", "Precio menor", "Compra mínima (cm)", "Maquina", "Estado" })' />
 </section>
 <script>
     window.adminModuleDefinitions = window.adminModuleDefinitions || {};
@@ -15,11 +16,12 @@
                 title: "Productos",
                 help: "Productos disponibles para los pedidos.",
                 id: "id",
-                columns: [["nombre", "Nombre"], ["precioBase", "Precio base"], ["precioMenor", "Precio menor"], ["maquina", "Maquina"], ["estado", "Estado", value => value ? "Activo" : "Inactivo"]],
+                columns: [["nombre", "Nombre"], ["precioBase", "Precio base", value => Number(value || 0).toLocaleString("es-PY")], ["precioMenor", "Precio menor", value => Number(value || 0).toLocaleString("es-PY")], ["compraMinimaCm", "Compra mínima (cm)"], ["maquina", "Maquina"], ["estado", "Estado", value => value ? "Activo" : "Inactivo"]],
                 fields: [
                     { name: "nombre", label: "Nombre", required: true },
-                    { name: "precioBase", label: "Precio base", type: "number", defaultValue: 0 },
-                    { name: "precioMenor", label: "Precio menor", type: "number", defaultValue: 200000 },
+                    { name: "precioBase", label: "Precio base", type: "money", defaultValue: 0 },
+                    { name: "precioMenor", label: "Precio menor", type: "money", defaultValue: 200000 },
+                    { name: "compraMinimaCm", label: "Compra mínima (cm)", type: "number", defaultValue: 0.2 },
                     { name: "maquinaId", label: "Maquina", type: "select", source: "maquinas", value: "id", text: "nombre" },
                     { name: "estado", label: "Activo", type: "checkbox", defaultValue: true }
                 ]

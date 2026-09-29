@@ -29,17 +29,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@title - PrintKm</title>
     <link rel="icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
-    <link rel="icon" type="image/png" sizes="64x64" href="~/favicon.png" asp-append-version="true" />
-    <link rel="shortcut icon" href="~/favicon.ico" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/index-Cio5xgoS.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     <style>
         .back-list-button {
-            color: #075f72;
+            color: #111827;
             cursor: pointer;
             background: #fff;
-            border: 1px solid #cfdde6;
+            border: 1px solid #bae6fd;
             border-radius: 8px;
             min-width: 174px;
             padding: 14px 20px;
@@ -48,10 +46,11 @@
         }
 
         .back-list-button:hover {
-            background: #f7fbfc;
-            border-color: #b8ccd8;
+            background: #f0f9ff;
+            border-color: #bae6fd;
         }
     </style>
+    <link rel="stylesheet" href="~/css/printkm-theme.css" asp-append-version="true" />
 </head>
 <body>
     <div id="toast-host" class="toast-host" aria-live="polite" aria-atomic="true"></div>
@@ -82,6 +81,10 @@
                 </div>
             </header>
             @RenderBody()
+            <footer class="app-system-footer">
+                <span><strong>PrintKm</strong> — Francisco Villalba</span>
+                <span class="app-system-footer-version">V1.2026.01</span>
+            </footer>
         </div>
     </main>
 

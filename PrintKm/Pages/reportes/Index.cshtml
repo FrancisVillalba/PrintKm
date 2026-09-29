@@ -12,7 +12,7 @@
             <button class="active" type="button" data-report-module="commissions">Comisiones</button>
             <button type="button" data-report-module="payment-lots">Pagos generados</button>
             <button type="button" data-report-module="shipping">Envio de pedidos</button>
-            <button type="button" data-report-module="customer-debt">Ventas de clientes</button>
+            <button type="button" data-report-module="customer-debt">Cliente estado pago</button>
             <button type="button" data-report-module="management-summary">Resumen gerencial</button>
         </aside>
 
@@ -56,6 +56,7 @@
         const debtDateToInput = document.getElementById("debt-date-to");
         const debtClientInput = document.getElementById("debt-client");
         const debtStatusInput = document.getElementById("debt-status");
+        const debtPaymentMethodInput = document.getElementById("debt-payment-method");
         const debtSellerInput = document.getElementById("debt-seller");
         const customerDebtKpis = document.getElementById("customer-debt-kpis");
         const customerDebtBody = document.getElementById("customer-debt-body");
@@ -130,12 +131,7 @@
                 return Number(seller.totalComision || 0);
             }
 
-            return details.reduce((total, detail) => {
-                const quantity = Number(detail.cantidad || 0);
-                const commission = Number(detail.comisionUnitario || 0);
-                const extra = Number(detail.precioExtra || 0);
-                return total + quantity * commission + extra;
-            }, 0);
+            return details.reduce((total, detail) => total + Number(detail.comisionTotal || 0), 0);
         }
 
         function escapeHtml(value) {
@@ -243,6 +239,7 @@
             if (debtDateToInput.value) params.set("dateTo", debtDateToInput.value);
             if (debtClientInput.value.trim()) params.set("cliente", debtClientInput.value.trim());
             if (debtStatusInput.value) params.set("estadoPago", debtStatusInput.value);
+            if (debtPaymentMethodInput.value) params.set("formaPagoId", debtPaymentMethodInput.value);
             if (debtSellerInput.value) params.set("vendedorId", debtSellerInput.value);
             return params;
         }
@@ -286,7 +283,10 @@
                 profileFilter.value = String(salesProfile.id);
             }
             renderSellerFilter();
-            debtSellerInput.innerHTML = `<option value="">Todos</option>` + reportCommissionOptions.usuarios
+            debtPaymentMethodInput.innerHTML = `<option value="">Todas</option>` + (options.formasPago || [])
+                .map(method => `<option value="${escapeHtml(method.id)}">${escapeHtml(method.nombre || method.id)}</option>`)
+                .join("");
+            debtSellerInput.innerHTML = `<option value="">Todos</option>` + (options.vendedoresTodos || [])
                 .map(seller => `<option value="${seller.id}">${escapeHtml(seller.persona || seller.nombreUsuario || `Usuario ${seller.id}`)}</option>`)
                 .join("");
         }
@@ -720,7 +720,7 @@
         shippingClientInput.addEventListener("input", () => debounceReportFilter(loadShippingReport));
         [managementDateFromInput, managementDateToInput]
             .forEach(input => input.addEventListener("change", loadManagementSummary));
-        [debtDateFromInput, debtDateToInput, debtStatusInput, debtSellerInput]
+        [debtDateFromInput, debtDateToInput, debtStatusInput, debtPaymentMethodInput, debtSellerInput]
             .forEach(input => input.addEventListener("change", loadCustomerDebtReport));
         debtClientInput.addEventListener("input", () => debounceReportFilter(loadCustomerDebtReport));
         document.getElementById("download-bank-txt").addEventListener("click", () => downloadReport("txt", sellerFilter.value, sellerFilter.selectedOptions[0]?.textContent || "todos"));

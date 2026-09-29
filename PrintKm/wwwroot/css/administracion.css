@@ -16,8 +16,8 @@
 
 .admin-panel form.admin-form {
   align-items: start;
-  background: #f8fbfc;
-  border: 1px solid #d7e5ec;
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
   border-radius: 8px;
   column-gap: 14px;
   display: grid;
@@ -29,7 +29,7 @@
 
 .admin-screen-header {
   align-items: start;
-  border-bottom: 1px solid #e7eef3;
+  border-bottom: 1px solid #e0f2fe;
   margin-bottom: 22px;
   padding-bottom: 20px;
 }
@@ -98,7 +98,7 @@
 }
 
 .admin-panel .admin-field > span {
-  color: #536b7a;
+  color: #075985;
   display: block;
   font-size: 0.82rem;
   line-height: 1.2;
@@ -111,7 +111,7 @@
 
 .admin-panel .admin-form-actions {
   align-items: center;
-  border-top: 1px solid #e1ebf0;
+  border-top: 1px solid #e0f2fe;
   display: flex;
   justify-content: flex-end;
   margin-top: 4px;
@@ -135,8 +135,8 @@
 
 .admin-panel .admin-list-toolbar {
   align-items: end;
-  background: #f8fbfc;
-  border-color: #d7e5ec;
+  background: #f0f9ff;
+  border-color: #e0f2fe;
   grid-template-columns: minmax(0, 1fr) auto auto;
   margin-bottom: 18px;
   padding: 16px;
@@ -168,6 +168,137 @@
   line-height: 1;
 }
 
+
+.admin-panel form.commission-form {
+  display: block;
+}
+
+.admin-panel .commission-editor {
+  align-items: stretch;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
+}
+
+.admin-panel .commission-fields {
+  align-content: start;
+  display: grid;
+  gap: 18px 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-panel .commission-percent-input {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 42px;
+}
+
+.admin-panel .commission-percent-input input {
+  border-radius: 6px 0 0 6px;
+  width: 100%;
+}
+
+.admin-panel .commission-percent-input > span {
+  align-items: center;
+  align-self: stretch;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+  color: #111827;
+  display: flex;
+  font-weight: 700;
+  justify-content: center;
+}
+
+.admin-panel .commission-status {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  gap: 8px;
+}
+
+.admin-panel .commission-status > span {
+  align-items: center;
+  display: flex;
+  font-weight: 500;
+  gap: 8px;
+  justify-content: flex-start;
+  min-height: 42px;
+  width: auto;
+}
+
+.admin-panel .commission-status input {
+  flex: 0 0 auto;
+  min-height: auto;
+  padding: 0;
+  width: 18px;
+}
+
+.admin-panel .commission-preview {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 9px;
+  padding: 14px;
+}
+
+.admin-panel .commission-preview-heading {
+  border-bottom: 1px solid #e0f2fe;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.admin-panel .commission-preview-heading strong {
+  color: #111827;
+  font-size: 0.95rem;
+}
+
+.admin-panel .commission-preview-heading small {
+  color: #075985;
+  font-size: 0.74rem;
+}
+
+.admin-panel .commission-preview-values {
+  display: grid;
+  gap: 7px;
+}
+
+.admin-panel .commission-preview-values > div {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 4px;
+}
+
+.admin-panel .commission-preview-values span {
+  color: #075985;
+  font-size: 0.78rem;
+}
+
+.admin-panel .commission-preview-values strong {
+  color: #111827;
+  font-size: 0.9rem;
+}
+
+.admin-panel .commission-preview-values .commission-preview-total {
+  background: #075985;
+  border-radius: 7px;
+  margin-top: 3px;
+  padding: 10px;
+}
+
+.admin-panel .commission-preview-values .commission-preview-total span,
+.admin-panel .commission-preview-values .commission-preview-total strong {
+  color: #fff;
+}
+
+.admin-panel .commission-form .admin-form-actions {
+  margin-top: 18px;
+}
 @media (max-width: 1400px) {
   .admin-panel form.admin-form {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -181,6 +312,13 @@
 }
 
 @media (max-width: 720px) {
+  .admin-panel .commission-editor,
+  .admin-panel .commission-fields {
+    grid-template-columns: 1fr;
+  }
+
+
+
   .admin-panel form.admin-form,
   .admin-panel .admin-list-toolbar {
     grid-template-columns: 1fr;

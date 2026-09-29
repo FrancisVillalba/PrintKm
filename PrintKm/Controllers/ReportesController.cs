@@ -18,6 +18,8 @@ public class ReportesController : ControllerBase
     public async Task<ActionResult<object>> GetOptions(CancellationToken cancellationToken)
     {
         var usuarios = await _backendApiClient.GetAsync<IEnumerable<UsuarioDto>>("api/Usuarios", cancellationToken);
+        var formasPago = await _backendApiClient.GetAsync<IEnumerable<CatalogStringDto>>("api/FormasPago", cancellationToken)
+            ?? Enumerable.Empty<CatalogStringDto>();
         var perfiles = await _backendApiClient.GetAsync<IEnumerable<PerfilDto>>("api/Perfiles", cancellationToken)
             ?? Enumerable.Empty<PerfilDto>();
         var productoComisiones = await _backendApiClient.GetAsync<IEnumerable<ProductoComisionDto>>("api/ProductoComisiones", cancellationToken)
@@ -35,8 +37,11 @@ public class ReportesController : ControllerBase
             .Select(vendedor => vendedor.VendedorUsuarioId)
             .ToHashSet();
 
-        var vendedores = usuarios
-            .Where(IsPerfilVendedor)
+        var vendedoresTodos = usuarios
+            .Where(usuario => usuario.Estado != false)
+            .OrderBy(usuario => usuario.Persona ?? usuario.NombreUsuario)
+            .ToList();
+        var vendedores = vendedoresTodos
             .Where(vendedor => !vendedoresExternosIds.Contains(vendedor.Id))
             .ToList();
         var vendedoresExternos = usuarios
@@ -59,7 +64,7 @@ public class ReportesController : ControllerBase
             .OrderBy(usuario => usuario.Persona ?? usuario.NombreUsuario)
             .ToList();
 
-        return Ok(new { perfilesVenta, usuariosVenta, vendedores, vendedoresExternos, teamLeaders });
+        return Ok(new { perfilesVenta, usuariosVenta, vendedores, vendedoresTodos, vendedoresExternos, teamLeaders, formasPago = formasPago.Where(x => x.Estado != false).OrderBy(x => x.Nombre) });
     }
 
     [HttpGet("comisiones-vendedores")]
@@ -136,6 +141,7 @@ public class ReportesController : ControllerBase
         [FromQuery] DateTime? dateTo = null,
         [FromQuery] string? cliente = null,
         [FromQuery] string? estadoPago = null,
+        [FromQuery] string? formaPagoId = null,
         [FromQuery] int? vendedorId = null,
         CancellationToken cancellationToken = default)
     {
@@ -144,6 +150,7 @@ public class ReportesController : ControllerBase
         if (dateTo.HasValue) filters.Add($"dateTo={dateTo.Value:yyyy-MM-dd}");
         if (!string.IsNullOrWhiteSpace(cliente)) filters.Add($"cliente={Uri.EscapeDataString(cliente)}");
         if (!string.IsNullOrWhiteSpace(estadoPago)) filters.Add($"estadoPago={Uri.EscapeDataString(estadoPago)}");
+        if (!string.IsNullOrWhiteSpace(formaPagoId)) filters.Add($"formaPagoId={Uri.EscapeDataString(formaPagoId)}");
         if (vendedorId.HasValue) filters.Add($"vendedorId={vendedorId.Value}");
 
         var result = await _backendApiClient.GetResultAsync<ReporteClientesDeudaDto>(

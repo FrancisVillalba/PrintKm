@@ -9,22 +9,17 @@
 <section class="dashboard-main dashboard-analytics">
     <section class="dashboard-analytics-grid" aria-label="Resumen del sistema de impresiones">
         <article class="analytics-card machine-card">
-            <header>
-                <h2>Meta mensual de facturacion por maquina</h2>
+            <header class="machine-card-header">
+                <h2>Meta mensual de facturación por máquina</h2>
             </header>
-            <div class="machine-dashboard-row">
-                <div class="machine-chart-layout">
-                    <div class="donut-chart" id="machine-donut">
-                        <div>
-                            <span>Total</span>
-                            <strong id="machine-total"></strong>
-                        </div>
-                    </div>
-                    <ul class="machine-legend" id="machine-legend"></ul>
-                </div>
-                <div class="machine-goals-grid" id="machine-goals-grid" aria-label="Metas mensuales por maquina"></div>
-            </div>
-            <p class="chart-caption" id="machine-period-caption">Facturacion mensual contra metas configuradas</p>
+            <section class="machine-overall" aria-label="Progreso general">
+                <div class="machine-overall-label"><span>Progreso general</span><strong id="machine-total">0%</strong></div>
+                <div class="machine-progress-track"><i id="machine-total-progress"></i></div>
+            </section>
+            <div class="machine-goals-grid" id="machine-goals-grid" aria-label="Metas mensuales por máquina"></div>
+            <footer class="machine-card-footer">
+                <span id="machine-period-caption">Facturación mensual contra metas configuradas</span>
+            </footer>
         </article>
 
         <section class="summary-card-grid" aria-label="Estado operativo de pedidos">
@@ -58,15 +53,14 @@
                 <h2>Mejor vendedor del mes</h2>
             </header>
             <div class="bar-chart seller-chart" id="seller-bars"></div>
-            <p class="chart-axis-label">Ranking del mes</p>
         </article>
 
         <article class="analytics-card bar-card">
             <header>
                 <h2>Pendientes de pago</h2>
+                <p class="bar-card-subtitle">Proporción del saldo pendiente</p>
             </header>
             <div class="bar-chart" id="payment-bars"></div>
-            <p class="chart-axis-label">Clientes con saldo pendiente</p>
         </article>
     </section>
 </section>
@@ -104,7 +98,7 @@
 
 @section Scripts {
     <script>
-        const chartColors = ["#20b85a", "#0f7cf2", "#ff9800", "#7545c9", "#10aeb8", "#ff2f21", "#e543a4"];
+        const chartColors = ["#38bdf8", "#0369a1", "#111827", "#7dd3fc", "#0284c7", "#475569", "#0c4a6e"];
         const detailModal = document.getElementById("dashboard-detail-modal");
         const detailTitle = document.getElementById("dashboard-detail-title");
         const detailCaption = document.getElementById("dashboard-detail-caption");
@@ -139,83 +133,74 @@
         }
 
         function renderTotalDonut(goal) {
-            const donut = document.getElementById("machine-donut");
-            const legend = document.getElementById("machine-legend");
             const target = Number(goal?.meta || 0);
-            const percent = Math.max(Math.min(Number(goal?.porcentaje || 0), 100), 0);
-
-            if (target === 0) {
-                donut.style.background = "#edf2f5";
-                donut.querySelector("span").textContent = "Sin meta";
-                donut.querySelector("strong").textContent = "";
-                legend.innerHTML = `<li><span></span><strong>Sin meta configurada</strong></li>`;
-                return;
-            }
-
-            donut.style.background = `conic-gradient(${chartColors[0]} 0% ${percent}%, #d9e1ea ${percent}% 100%)`;
-            donut.querySelector("span").textContent = goal.cumplido ? "Cumplido" : "Falta";
-            donut.querySelector("strong").textContent = "";
-            legend.innerHTML = `
-                <li>
-                    <span style="background:${chartColors[0]}"></span>
-                    <strong>Vendido</strong>
-                </li>
-                <li>
-                    <span style="background:#d9e1ea"></span>
-                    <strong>Falta para meta total</strong>
-                </li>
-                <li>
-                    <span style="background:#07145a"></span>
-                    <strong>Meta total</strong>
-                </li>`;
+            const percent = target > 0
+                ? Math.max(Math.min(Number(goal?.porcentaje || 0), 100), 0)
+                : 0;
+            document.getElementById("machine-total").textContent = target > 0 ? `${Math.round(percent)}%` : "Sin meta";
+            document.getElementById("machine-total-progress").style.width = `${percent}%`;
         }
 
         function renderGoalDonuts(items) {
             const container = document.getElementById("machine-goals-grid");
             const goals = items || [];
 
+            if (!goals.length) {
+                container.innerHTML = `<p class="empty-chart">No hay máquinas activas para mostrar</p>`;
+                return;
+            }
+
             container.innerHTML = goals.map((item, index) => {
                 const percent = Math.max(Math.min(Number(item.porcentaje || 0), 100), 0);
                 const color = chartColors[index % chartColors.length];
-                const background = percent > 0
-                    ? `conic-gradient(${color} 0% ${percent}%, #d9e1ea ${percent}% 100%)`
-                    : "#edf2f5";
+                const hasGoal = Number(item.meta || 0) > 0;
+                const status = !hasGoal ? "Sin meta" : item.cumplido ? "Cumplida" : "Falta";
+                const displayPercent = hasGoal ? `${Math.round(percent)}%` : "—";
 
                 return `
-                    <article class="goal-donut-card">
-                        <h3>${item.nombre}</h3>
-                        <div class="donut-chart donut-chart-small" style="background:${background}">
-                            <div>
-                                <span>Falta</span>
-                                <strong></strong>
-                            </div>
-                        </div>
+                    <article class="machine-goal-row">
+                        <span class="machine-goal-icon" style="--machine-color:${color}" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg>
+                        </span>
+                        <h3 title="${escapeHtml(item.nombre)}">${escapeHtml(item.nombre)}</h3>
+                        <div class="machine-progress-track"><i style="width:${percent}%; background:${color}"></i></div>
+                        <strong class="machine-goal-percent">${displayPercent}</strong>
+                        <span class="machine-goal-status ${item.cumplido ? "is-complete" : ""}">${status}</span>
                     </article>`;
             }).join("");
         }
 
-        function renderBars(containerId, items, valueKey) {
+        function renderBars(containerId, items, valueKey, limit) {
             const container = document.getElementById(containerId);
-            const max = Math.max(...items.map(item => Number(item[valueKey] || 0)), 1);
+            const rows = (items || []).slice(0, limit);
+            const max = Math.max(...rows.map(item => Number(item[valueKey] || 0)), 1);
 
-            if (!items.length) {
+            if (!rows.length) {
                 container.innerHTML = `<p class="empty-chart">Sin datos para mostrar</p>`;
                 return;
             }
 
-            container.innerHTML = items.map((item, index) => {
+            const isPayment = containerId === "payment-bars";
+            container.innerHTML = rows.map((item, index) => {
                 const value = Number(item[valueKey] || 0);
                 const width = Math.max((value / max) * 100, 3);
+                const name = escapeHtml(item.nombre);
+                const initial = name.trim().charAt(0).toUpperCase() || "—";
+                const marker = isPayment
+                    ? `<span class="bar-avatar">${initial}</span>`
+                    : `<span class="bar-rank">${index + 1}°</span>`;
+                const label = isPayment
+                    ? `<button type="button" class="dashboard-client-trigger" data-dashboard-client="${name}">${name}</button>`
+                    : `<span class="bar-name" title="${name}">${name}</span>`;
+
                 return `
                     <div class="bar-row">
-                        ${containerId === "payment-bars"
-                            ? `<button type="button" class="dashboard-client-trigger" data-dashboard-client="${escapeHtml(item.nombre)}">${escapeHtml(item.nombre)}</button>`
-                            : `<span title="${escapeHtml(item.nombre)}">${escapeHtml(item.nombre)}</span>`}
+                        ${marker}
+                        ${label}
                         <div class="bar-track">
-                            <i style="width:${width}%; background:${chartColors[index % chartColors.length]}"></i>
+                            <i style="width:${width}%; background:${isPayment ? "#38bdf8" : chartColors[index % chartColors.length]}"></i>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join("");
         }
 
@@ -335,13 +320,12 @@
             renderStage("pendienteEnvio", "metric-pendiente-envio", "metric-pendiente-envio-today", dashboard.pendienteEnvio);
             renderStage("enviadosHoy", "metric-enviados", "metric-enviados-today", dashboard.enviadosHoy);
             renderStage("incidencias", "metric-incidencias", "metric-incidencias-today", dashboard.incidencias);
-            document.getElementById("machine-total").textContent = "";
-            document.getElementById("machine-period-caption").textContent = `Facturacion de ${monthLabel} contra metas configuradas`;
+            document.getElementById("machine-period-caption").textContent = `Facturación de ${monthLabel} contra metas configuradas`;
 
             renderTotalDonut(totalGoal);
             renderGoalDonuts(machineGoals);
-            renderBars("payment-bars", dashboard.pendientesPago || [], "monto");
-            renderBars("seller-bars", dashboard.mejoresVendedores || [], "monto");
+            renderBars("payment-bars", dashboard.pendientesPago || [], "monto", 13);
+            renderBars("seller-bars", dashboard.mejoresVendedores || [], "monto", 10);
         }
 
         loadDashboard();
