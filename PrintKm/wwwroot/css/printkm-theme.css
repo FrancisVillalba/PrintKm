@@ -130,22 +130,328 @@ body { color: #374151; }
 .primary-button, .save-button, .admin-primary { background: #075985; color: #fff; }
 .primary-button:hover, .save-button:hover, .admin-primary:hover { background: #0c4a6e; }
 
-/* All editable fields use neutral gray surfaces, including custom selectors. */
+/* White fields with subtle gray borders; gray list selection. */
 :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]), select, textarea, .client-select2-button, .admin-multiselect-button) {
-  background-color: #f3f4f6 !important;
-  border-color: #d1d5db !important;
+  background-color: #fff !important;
+  border: 1px solid #d1d5db !important;
   color: #374151 !important;
   box-shadow: none !important;
+  outline: none !important;
 }
-:is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]), select, textarea, .client-select2-button, .admin-multiselect-button):focus,
-.client-select2-button[aria-expanded="true"], .admin-multiselect-button[aria-expanded="true"] {
-  border-color: #6b7280 !important;
+/* Visible keyboard focus. */
+:is(input, select, textarea, .client-select2-button, .admin-multiselect-button):focus-visible {
   outline: 2px solid #9ca3af !important;
   outline-offset: 2px;
-  box-shadow: none !important;
 }
 .client-select2-button::after, .admin-multiselect-button::after { border-color: #6b7280; }
-.client-select2-dropdown, .admin-multiselect-dropdown { border-color: #d1d5db; }
+.client-select2-dropdown, .admin-multiselect-dropdown { background: #fff; border-color: #e5e7eb; }
+.client-select2-option, .admin-multiselect-option { background: #fff; color: #374151; }
 .client-select2-option:hover, .client-select2-option.is-selected,
-.admin-multiselect-option:hover, .admin-multiselect-option.is-selected { background: #f3f4f6; color: #374151; }
+.admin-multiselect-option:hover, .admin-multiselect-option.is-selected {
+  background: #e5e7eb !important; color: #374151 !important;
+}
+select option { background: #fff; color: #374151; }
+select option:checked, select option:hover { background: #e5e7eb; color: #374151; }
 input[type="checkbox"], input[type="radio"] { accent-color: #6b7280; }
+
+/* Neutral table stripes and separators. */
+.orders-table, .orders-table-wrap { border-color: #e5e7eb; }
+.orders-table thead th { background: #f3f4f6; border-color: #d1d5db; color: #374151; }
+.orders-table tbody tr:nth-child(odd) td { background: #fff; }
+.orders-table tbody tr:nth-child(even) td { background: #f3f4f6; }
+.orders-table tbody td { border-color: #e5e7eb; }
+.orders-table tbody tr:hover td { background: #e5e7eb; }
+/* Consistent workflow badges, including the detail states. */
+.orders-status:is(.cargado, .carga, .nuevo) { color: #166534; background: #dcfce7; border: 1px solid #86efac; }
+.orders-status:is(.pendiente, .pendiente-de-impresion, .pendiente-impresion, .en-espera) { color: #854d0e; background: #fef9c3; border: 1px solid #fde047; }
+.orders-status:is(.en-impresion, .impresion, .imprimiendo, .en-produccion, .produccion) { color: #1e40af; background: #dbeafe; border: 1px solid #93c5fd; }
+.orders-status:is(.control, .en-control, .pendiente-control, .pendiente-de-control) { color: #6b21a8; background: #f3e8ff; border: 1px solid #d8b4fe; }
+.orders-status:is(.pendiente-envio, .pendiente-de-envio, .pendiente-de-enviar) { color: #9a3412; background: #ffedd5; border: 1px solid #fdba74; }
+.orders-status:is(.en-envio, .envio, .enviado, .despachado, .despacho) { color: #155e75; background: #cffafe; border: 1px solid #67e8f9; }
+.orders-status:is(.entregado, .finalizado, .completado) { color: #065f46; background: #d1fae5; border: 1px solid #6ee7b7; }
+.orders-status:is(.pendiente-de-pago, .pago-pendiente) { color: #3730a3; background: #e0e7ff; border: 1px solid #a5b4fc; }
+.orders-status:is(.cancelado, .anulado, .rechazado, .eliminar, .eliminado) { color: #991b1b; background: #fee2e2; border: 1px solid #fca5a5; }
+.orders-status.devuelto { color: #9d174d; background: #fce7f3; border: 1px solid #f9a8d4; }
+
+/* Replacement orders override ordinary alternating row backgrounds. */
+.orders-table tbody tr.order-replacement-row > td,
+.admin-table tbody tr.order-replacement-row > td {
+  background: #d1d5db; border-top-color: #b8bec7; border-bottom-color: #b8bec7;
+}
+.orders-table tbody tr.order-replacement-row > td:first-child,
+.admin-table tbody tr.order-replacement-row > td:first-child { box-shadow: inset 4px 0 0 #6b7280; }
+.orders-table tbody tr.order-replacement-row:hover > td,
+.admin-table tbody tr.order-replacement-row:hover > td { background: #bfc5ce; }
+.order-replacement-yes, .general-replacement-yes { color: #fff; background: #4b5563; }
+
+/* Common component design: the Pedidos screen is the visual reference. */
+:root {
+  --pk-border: #e5e7eb;
+  --pk-row: #f3f4f6;
+  --pk-primary: #075985;
+  --pk-secondary: #e0f2fe;
+}
+:is(.orders-table-wrap, .clients-table-wrap, .admin-table-wrap, .reports-table-wrap,
+.detail-table-wrap, .payment-history-table-wrap, .team-leader-sales-table-wrap) {
+  border: 1px solid var(--pk-border); border-radius: 10px; background: #fff; overflow-x: auto;
+}
+/* Apply to native tables as well as module-specific tables and nested reports. */
+table thead th {
+  background: var(--pk-row) !important; color: #374151;
+  border-bottom: 1px solid #d1d5db !important;
+  font-size: .76rem; font-weight: 700; letter-spacing: .025em; text-transform: uppercase;
+}
+table tbody tr:nth-child(odd) > td { background: #fff !important; }
+table tbody tr:nth-child(even) > td { background: var(--pk-row) !important; }
+table tbody tr:hover > td { background: #e5e7eb !important; }
+table :is(th, td) { border-color: var(--pk-border) !important; }
+table :is(th, td) { padding: 14px; vertical-align: middle; }
+table tfoot :is(th, td) { background: var(--pk-row); }
+table tbody tr.order-replacement-row > td { background: #d1d5db !important; border-color: #b8bec7 !important; }
+table tbody tr.order-replacement-row:hover > td { background: #bfc5ce !important; }
+table tbody tr.order-replacement-row > td:first-child { box-shadow: inset 4px 0 #6b7280; }
+:is(.orders-filters, .clients-filters, .reports-filters, .delivery-filters,
+.team-sales-filters, .admin-panel form.admin-form, .admin-panel .admin-list-toolbar,
+.admin-access-filter, .entry-form, .client-entry-form, .app-password-form) {
+  background: #fff; border: 1px solid var(--pk-border); border-radius: 10px;
+  padding: 20px; box-shadow: none;
+}
+:is(.orders-filters, .clients-filters, .reports-filters, .delivery-filters,
+.team-sales-filters, .admin-form, .entry-form, .client-entry-form) label {
+  color: #374151; font-size: .85rem; font-weight: 600;
+}
+:is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+select, .client-select2-button, .admin-multiselect-button) { min-height: 42px; border-radius: 6px; }
+textarea { border-radius: 6px; }
+:is(.primary-button, .save-button, .orders-primary, .clients-primary, .client-entry-primary,
+.admin-panel .admin-primary, .admin-primary, .order-action-save, .order-action-next) {
+  background: var(--pk-primary); color: #fff; border: 1px solid var(--pk-primary);
+  border-radius: 8px; font-weight: 700; box-shadow: none; min-height: 42px;
+}
+:is(.primary-button, .save-button, .orders-primary, .clients-primary, .client-entry-primary,
+.admin-panel .admin-primary, .admin-primary, .order-action-save, .order-action-next):hover {
+  background: #0c4a6e; border-color: #0c4a6e; color: #fff;
+}
+:is(.admin-panel .admin-secondary, .admin-secondary, .client-entry-secondary,
+.reports-secondary-button, .reports-detail-button, .reports-bank-button,
+.back-list-button, .orders-edit, .orders-export, .client-row-actions button,
+.admin-panel .admin-row-actions button, .admin-row-actions button, .control-download-button,
+.delivery-label-button, .client-copy-button, .payment-history-download) {
+  background: var(--pk-secondary); color: var(--pk-primary); border: 1px solid #bae6fd;
+  border-radius: 6px; font-weight: 700; box-shadow: none; min-height: 38px;
+}
+:is(.admin-panel .admin-secondary, .admin-secondary, .client-entry-secondary,
+.reports-secondary-button, .reports-detail-button, .reports-bank-button,
+.back-list-button, .orders-edit, .orders-export, .client-row-actions button,
+.admin-panel .admin-row-actions button, .admin-row-actions button, .control-download-button,
+.delivery-label-button, .client-copy-button, .payment-history-download):hover {
+  background: #bae6fd; border-color: #7dd3fc; color: #0c4a6e;
+}
+/* Semantic actions retain their meaning within the common button shape. */
+:is(.admin-panel .admin-row-actions button.danger, .admin-row-actions button.danger,
+.client-row-actions button.danger, .order-action-delete, .delivery-remove-button,
+.client-delete-shipping-button, .control-reject-button, .payment-history-delete) {
+  color: #991b1b; background: #fff1f2; border: 1px solid #fca5a5; border-radius: 6px; box-shadow: none;
+}
+:is(.admin-panel .admin-row-actions button.danger, .admin-row-actions button.danger,
+.client-row-actions button.danger, .order-action-delete, .delivery-remove-button,
+.client-delete-shipping-button, .control-reject-button, .payment-history-delete):hover {
+  color: #7f1d1d; background: #fee2e2; border-color: #f87171;
+}
+.control-approve-button { color: #166534; background: #dcfce7; border: 1px solid #86efac; border-radius: 6px; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+@media (max-width: 620px) {
+  :is(.orders-filters, .clients-filters, .reports-filters, .delivery-filters,
+  .team-sales-filters, .admin-panel form.admin-form, .admin-panel .admin-list-toolbar,
+  .admin-access-filter, .entry-form, .client-entry-form, .app-password-form) { padding: 14px; }
+}
+
+/* Excel exports use a consistent green action color. */
+body .app-content button.orders-export {
+  background: #15803d; border-color: #15803d; color: #fff;
+}
+body .app-content button.orders-export:hover {
+  background: #166534; border-color: #166534; color: #fff;
+}
+body .app-content button.orders-export:focus-visible {
+  outline: 2px solid #166534; outline-offset: 3px;
+}
+
+/* Order workflow actions requested by the user. */
+body .order-action-button.order-action-save {
+  background: #facc15; border-color: #eab308; color: #422006;
+}
+body .order-action-button.order-action-save:hover {
+  background: #eab308; border-color: #ca8a04; color: #422006;
+}
+body .order-action-button.order-action-next {
+  background: #15803d; border-color: #15803d; color: #fff;
+}
+body .order-action-button.order-action-next:hover {
+  background: #166534; border-color: #166534; color: #fff;
+}
+
+/* Order editor: clear sections, compact side panels and a neutral canvas. */
+.entry-main #order-form {
+  background: transparent; border: 0; padding: 0; box-shadow: none;
+  display: grid; gap: 20px;
+}
+#order-form .entry-top-row {
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 250px) minmax(210px, 250px);
+  align-items: stretch; gap: 18px;
+}
+#order-form .entry-top-row > .entry-section:first-child { grid-column: 1; grid-row: 1; }
+#order-form .entry-top-row > .entry-section:nth-child(2) { grid-column: 2; grid-row: 1; }
+#order-form .entry-top-row > .order-actions-section { grid-column: 3; grid-row: 1; }
+#order-form .entry-section {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+  box-shadow: 0 3px 12px rgb(31 41 55 / 4%); min-width: 0;
+}
+#order-form .section-title {
+  padding: 16px 20px; background: #7dd3fc; color: #0c344b;
+  border-bottom: 1px solid #38bdf8; border-radius: 12px 12px 0 0;
+  font-size: .95rem; font-weight: 650; text-transform: none; letter-spacing: 0;
+}
+#order-form .panel-entry-fields { padding: 20px; gap: 24px; }
+#order-form .order-field-group { border-color: #e5e7eb; gap: 16px; }
+#order-form .order-field-group legend {
+  color: #64748b; font-size: .73rem; letter-spacing: .06em; font-weight: 650; padding-bottom: 12px;
+}
+#order-form .field, #order-form .order-reposition-check { color: #475569; font-size: .85rem; font-weight: 500; }
+#order-form .field :is(input, select), #order-form .client-select2-button { font-size: .9rem; font-weight: 400; }
+#order-form .payment-history-heading { margin-top: 6px; }
+#order-form .payment-history-heading > div > span { font-size: .95rem; font-weight: 600; color: #374151; }
+#order-form .payment-history-heading small { color: #6b7280; }
+#order-form .payment-history-count { color: #475569; background: #f3f4f6; font-weight: 600; }
+#order-form .payment-history-table-wrap { box-shadow: none; border-color: #e5e7eb; }
+#order-form .payment-history-empty { padding: 28px 16px; color: #6b7280; font-size: .875rem; }
+#order-form .order-state-actions { gap: 10px; padding: 18px; }
+#order-form .order-action-button { min-height: 44px; font-size: .9rem; font-weight: 650; box-shadow: none; }
+#order-form .action-state-field { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; }
+#order-form .order-budget-action { font-size: .875rem; font-weight: 600; box-shadow: none; }
+#order-form .order-notes-body { padding: 18px 20px; }
+#order-form #order-notes { min-height: 76px; }
+#order-form .entry-footer { border-radius: 10px; background: #fff; border: 1px solid #e5e7eb; padding: 18px 20px; }
+#order-form .order-reposition-switch { width: 64px; height: 32px; flex: 0 0 32px; background: #d1d5db; box-shadow: none; }
+#order-form .order-reposition-switch::after { width: 24px; height: 24px; top: 4px; left: 4px; }
+#order-form .order-reposition-switch::before { content: "No"; font-size: .7rem; font-weight: 600; right: 9px; color: #4b5563; }
+#order-form .order-reposition-check input:checked + .order-reposition-switch { background: #075985; }
+#order-form .order-reposition-check input:checked + .order-reposition-switch::after { transform: translateX(32px); }
+#order-form .order-reposition-check input:checked + .order-reposition-switch::before { content: "Sí"; left: 10px; right: auto; color: #fff; }
+.order-form-modal-header { background: #fff; border-bottom-color: #e5e7eb; padding: 16px 20px; }
+@media (max-width: 1100px) {
+  #order-form .entry-top-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #order-form .entry-top-row > .entry-section:first-child { grid-column: 1 / -1; grid-row: 1; }
+  #order-form .entry-top-row > .entry-section:nth-child(2) { grid-column: 1; grid-row: 2; }
+  #order-form .entry-top-row > .order-actions-section { grid-column: 2; grid-row: 2; }
+}
+@media (max-width: 620px) {
+  #order-form .entry-top-row { grid-template-columns: minmax(0, 1fr); }
+  #order-form .entry-top-row > .entry-section { grid-column: 1; grid-row: auto; }
+  #order-form .panel-entry-fields, #order-form .order-notes-body { padding: 16px; }
+}
+
+/* Client carrier and availability badges. */
+.clients-table :is(.carrier-status, .client-status) {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; border: 1px solid transparent; padding: 5px 11px; border-radius: 999px; font-weight: 600;
+}
+.clients-table .client-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.clients-table .client-status.activo { color: #166534; background: #dcfce7; border-color: #86efac; }
+.clients-table .client-status.inactivo { color: #991b1b; background: #fee2e2; border-color: #fca5a5; }
+.clients-table .carrier-color-0 { color: #1e40af; background: #dbeafe; border-color: #93c5fd; }
+.clients-table .carrier-color-1 { color: #6b21a8; background: #f3e8ff; border-color: #d8b4fe; }
+.clients-table .carrier-color-2 { color: #155e75; background: #cffafe; border-color: #67e8f9; }
+.clients-table .carrier-color-3 { color: #9a3412; background: #ffedd5; border-color: #fdba74; }
+.clients-table .carrier-color-4 { color: #9d174d; background: #fce7f3; border-color: #f9a8d4; }
+.clients-table .carrier-color-5 { color: #3730a3; background: #e0e7ff; border-color: #a5b4fc; }
+.clients-table .carrier-empty { color: #6b7280; background: #f3f4f6; border-color: #d1d5db; }
+.clients-table tbody td:first-child { color: #1f2937; font-weight: 600; }
+
+/* Client editor shares the order editor's card and field design. */
+.client-entry-main #client-form {
+  display: grid; gap: 20px; padding: 0; border: 0;
+  background: transparent; box-shadow: none;
+}
+#client-form .client-entry-card {
+  padding: 0; background: #fff; border: 1px solid #e5e7eb;
+  border-radius: 12px; box-shadow: 0 3px 12px rgb(31 41 55 / 4%);
+  min-width: 0;
+}
+#client-form .client-entry-card-header {
+  margin: 0; padding: 16px 20px; background: #7dd3fc; color: #0c344b;
+  border-bottom: 1px solid #38bdf8; border-radius: 12px 12px 0 0;
+  gap: 16px;
+}
+#client-form .client-entry-card-header h2 {
+  margin: 0; color: #0c344b; font-size: .95rem;
+  font-weight: 650; text-transform: none; letter-spacing: 0;
+}
+#client-form .client-entry-card-header p {
+  margin: 5px 0 0; color: #164e63; font-size: .8rem; line-height: 1.5;
+}
+#client-form .client-entry-grid { padding: 20px; gap: 18px 16px; }
+#client-form .client-entry-grid label {
+  color: #475569; font-size: .85rem; font-weight: 500; gap: 8px;
+}
+#client-form .client-entry-grid :is(input, select, textarea) { font-size: .9rem; font-weight: 400; }
+#client-form .client-entry-grid textarea { min-height: 76px; }
+#client-form .client-shipping-tools { flex-wrap: wrap; gap: 10px; }
+#client-form .client-entry-check { color: #0c344b; font-size: .85rem; font-weight: 500; }
+#client-form :is(.back-list-button, .client-copy-button) {
+  background: #fff; border-color: #d1d5db; color: #075985;
+  font-size: .875rem; font-weight: 600; padding: 9px 14px; min-height: 40px; box-shadow: none;
+}
+#client-form :is(.back-list-button, .client-copy-button):hover { background: #f3f4f6; }
+#client-form .client-entry-actions {
+  margin: 0; padding: 18px 20px; background: #fff; border: 1px solid #e5e7eb;
+  border-radius: 10px; gap: 10px;
+}
+#client-form .client-entry-primary {
+  background: #facc15; border: 1px solid #eab308; color: #422006;
+  min-height: 44px; border-radius: 8px; font-size: .9rem; font-weight: 650; box-shadow: none;
+}
+#client-form .client-entry-primary:hover { background: #eab308; border-color: #ca8a04; color: #422006; }
+#client-form .client-entry-secondary { min-height: 44px; font-size: .9rem; font-weight: 600; box-shadow: none; }
+@media (max-width: 620px) {
+  #client-form .client-entry-grid, #client-form .client-entry-card-header,
+  #client-form .client-entry-actions { padding: 16px; }
+  #client-form .client-entry-card-header-inline { align-items: stretch; flex-direction: column; }
+}
+
+/* Client form actions match the Cargar cliente button. */
+#client-form :is(.client-entry-primary, .client-entry-secondary, .back-list-button, .client-copy-button) {
+  background: #075985; border: 1px solid #075985; color: #fff;
+  border-radius: 8px; min-height: 44px; padding: 12px 18px;
+  font-size: .9rem; font-weight: 700; box-shadow: none;
+}
+#client-form :is(.client-entry-primary, .client-entry-secondary, .back-list-button, .client-copy-button):hover {
+  background: #0c4a6e; border-color: #0c4a6e; color: #fff;
+}
+#client-form .client-delete-shipping-button {
+  background: #dc2626; border: 1px solid #dc2626; color: #fff;
+  border-radius: 8px; min-height: 44px; padding: 12px 18px;
+  font-size: .9rem; font-weight: 700; box-shadow: none;
+}
+#client-form .client-delete-shipping-button:hover {
+  background: #b91c1c; border-color: #b91c1c; color: #fff;
+}
+
+/* Client and shipping details side by side on desktop. */
+.client-entry-main #client-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch; gap: 20px;
+}
+#client-form .client-entry-card { display: flex; flex-direction: column; }
+#client-form .client-entry-card-header-inline { flex-wrap: wrap; align-items: center; }
+#client-form .client-entry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#client-form .client-entry-grid label { min-width: 0; }
+#client-form .client-address-field { grid-column: 1 / -1; }
+#client-form .client-entry-actions { grid-column: 1 / -1; }
+#client-form .client-shipping-tools { justify-content: flex-start; }
+@media (max-width: 1100px) {
+  .client-entry-main #client-form { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 620px) {
+  #client-form .client-entry-grid { grid-template-columns: minmax(0, 1fr); }
+}

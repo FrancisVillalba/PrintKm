@@ -304,7 +304,7 @@
                     const details = Array.isArray(order.details) ? order.details : [];
                     const sellerName = shortPersonName(order.seller) || order.seller || "-";
                     return `
-                <tr>
+                <tr class="${order.reposicion ? "order-replacement-row" : ""}">
                     <td>${escapeHtml(order.id)}</td>
                     <td>${escapeHtml(order.date)}</td>
                     <td class="orders-strong">${escapeHtml(order.client)}</td>

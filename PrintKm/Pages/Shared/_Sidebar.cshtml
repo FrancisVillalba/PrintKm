@@ -32,9 +32,7 @@
     bool CanSee(string name) => allowedModules.Count == 0 || allowedModules.Contains(name);
     var canSeeReportes = CanSee("Reportes") || allowedParentModules.Contains("Reportes");
     var canSeePedidos = CanSee("Pedidos");
-    var canSeeGrupoVentas = CanSee("Grupo de ventas");
-    var canSeeBuscadorGeneral = CanSee("BuscadorGeneral");
-    var canSeeVentas = canSeePedidos || canSeeGrupoVentas || canSeeBuscadorGeneral;
+    var canSeeVentas = canSeePedidos;
     var ventasActive = activeMenu == "pedidos" || activeMenu == "grupo-ventas" || activeMenu == "buscador-general";
 }
 @functions {
@@ -77,8 +75,6 @@
                 </button>
                 <div class="sidebar-submenu">
                     @if (canSeePedidos) { <button class="@(activeMenu == "pedidos" ? "active" : "")" type="button" onclick="window.navigateToApp('/pedidos')">@AppIcon("orders")<span>Pedidos</span></button> }
-                    @if (canSeeGrupoVentas) { <button class="@(activeMenu == "grupo-ventas" ? "active" : "")" type="button" onclick="window.navigateToApp('/grupo-ventas')">@AppIcon("team")<span>Grupo de ventas</span></button> }
-                    @if (canSeeBuscadorGeneral) { <button class="@(activeMenu == "buscador-general" ? "active" : "")" type="button" onclick="window.navigateToApp('/buscador-general')">@AppIcon("search")<span>Buscador general</span></button> }
                 </div>
             </div>
         }

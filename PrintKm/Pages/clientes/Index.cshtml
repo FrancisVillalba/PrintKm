@@ -154,6 +154,13 @@
             return params;
         }
 
+        function carrierColorClass(name) {
+            const normalized = String(name || "").trim().toLocaleLowerCase("es");
+            if (!normalized) return "carrier-empty";
+            let hash = 0;
+            for (const character of normalized) hash = (hash * 31 + character.codePointAt(0)) >>> 0;
+            return `carrier-color-${hash % 6}`;
+        }
         function renderClients() {
             body.innerHTML = clients.map(client => `
                 <tr>
@@ -162,7 +169,7 @@
                     <td>${escapeHtml(client.phone)}</td>
                     <td>${escapeHtml(client.email)}</td>
                     <td>${escapeHtml(client.city)}</td>
-                    <td><span class="carrier-status ${client.carrier ? "yes" : ""}">${escapeHtml(client.transportadora || "Sin datos")}</span></td>
+                    <td><span class="carrier-status ${carrierColorClass(client.transportadora)}">${escapeHtml(client.transportadora || "Sin datos")}</span></td>
                     <td><span class="client-status ${client.status.toLowerCase()}">${client.status}</span></td>
                     <td>
                         <div class="client-row-actions">
