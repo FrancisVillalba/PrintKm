@@ -130,6 +130,8 @@ public record DepartamentoDto(int Id, string Nombre, bool Estado);
 
 public record CiudadDto(int Id, int DepartamentoId, string? Departamento, int CodigoDistrito, string Nombre, bool Estado);
 
+public record SucursalDto(int Id, string Nombre, string? Direccion, bool Estado);
+
 public record TransportadoraDto(int Id, string Nombre, string? Telefono, string? Direccion, string? Observacion, decimal Monto, bool Estado);
 
 public record ClienteOptionsDto(
@@ -196,7 +198,8 @@ public record AdminOptionsDto(
     IEnumerable<DepartamentoDto> Departamentos,
     IEnumerable<CatalogStringDto> TiposDocumento,
     IEnumerable<ProductoDto> Productos,
-    IEnumerable<UsuarioDto> Usuarios);
+    IEnumerable<UsuarioDto> Usuarios,
+    IEnumerable<SucursalDto> Sucursales);
 
 public record EstadoVentaOptionDto(string Id, string? Nombre, string? Estado, int? NumeroFlujo);
 
@@ -209,7 +212,9 @@ public record UsuarioDto(
     string? Perfil,
     IEnumerable<int> PerfilIds,
     string? Perfiles,
-    bool? Estado);
+    bool? Estado,
+    int? SucursalId = null,
+    string? Sucursal = null);
 
 public record ProductoDto(int Id, string Nombre, decimal PrecioBase, decimal PrecioMenor, decimal CompraMinimaCm, int? MaquinaId, string? Maquina, bool Estado);
 
@@ -666,7 +671,9 @@ public record VentaImpresionCabDto(
     int? DeliveryUsuarioId,
     string? DeliveryUsuario,
     DateTime? FechaTomaDelivery,
-    IEnumerable<VentaImpresionDetDto> Detalles);
+    IEnumerable<VentaImpresionDetDto> Detalles,
+    int? SucursalId = null,
+    string? Sucursal = null);
 
 public record VentaImpresionDetDto(
     int Id,

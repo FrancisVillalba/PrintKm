@@ -13,6 +13,7 @@
         <label class="admin-field">Usuario <input data-field="nombreUsuario" type="text" required /></label> 
         <label class="admin-field">Contrasena<input data-field="pass" type="password" /><span>Dejar vacio para no cambiar</span></label>
         <label class="admin-field">Persona<select data-field="personaId" data-source="personas"><option value="">Seleccionar</option></select></label>
+        <label class="admin-field">Sucursal<select data-field="sucursalId" data-source="sucursales" required><option value="">Seleccionar</option></select></label>
         <fieldset class="admin-field admin-multi-field" data-multiselect-field="perfilIds">
             <legend>Perfiles</legend>
             <div class="admin-multiselect" data-multiselect="perfilIds">
@@ -29,7 +30,7 @@
             <div class="admin-form-buttons"><button class="admin-secondary cancel-record-button" type="button">Cancelar</button><button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button></div>
         </div>
     </form>
-    <partial name="_AdminFormularioTabla" model='@(new[] { "Usuario", "Persona", "Perfiles", "Estado" })' />
+    <partial name="_AdminFormularioTabla" model='@(new[] { "Usuario", "Persona", "Sucursal", "Perfiles", "Estado" })' />
 </section>
 
 <script>
@@ -41,6 +42,7 @@
         columns: [
             ["nombreUsuario", "Usuario"],
             ["persona", "Persona"],
+            ["sucursal", "Sucursal", value => value || "Sin asignar"],
             ["perfiles", "Perfiles"],
             ["estado", "Estado", value => value === false ? "Inactivo" : "Activo"]
         ],
@@ -48,6 +50,7 @@
             { name: "nombreUsuario", label: "Usuario", required: true },
             { name: "pass", label: "Contrasena", type: "password", createOnlyHint: "Dejar vacio para no cambiar" },
             { name: "personaId", label: "Persona", type: "select", source: "personas", value: "id", text: item => [item.primerNombre, item.primerApellido, item.documento].filter(Boolean).join(" ") || `Persona ${item.id}` },
+            { name: "sucursalId", label: "Sucursal", type: "select", source: "sucursales", value: "id", text: item => item.nombre + (item.estado ? "" : " (Inactiva)"), required: true, defaultValue: 1 },
             { name: "perfilIds", label: "Perfiles", type: "multiselect", source: "perfiles", value: "id", text: "nombre" },
             { name: "estado", label: "Activo", type: "checkbox", defaultValue: true }
         ]

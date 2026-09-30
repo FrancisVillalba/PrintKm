@@ -395,7 +395,9 @@ public class PedidosController : ControllerBase
             pedido.ComprobantePagoNombre ?? string.Empty,
             pedido.Observacion ?? string.Empty,
             pedido.Reposicion,
-            details);
+            details,
+            pedido.SucursalId,
+            pedido.Sucursal);
     }
     private static bool IsCargaState(VentaImpresionCabDto order)
     {

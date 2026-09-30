@@ -11,6 +11,7 @@
     var adminModules = new[]
     {
         new { Key = "usuarios", Label = "Usuarios" },
+        new { Key = "sucursales", Label = "Sucursales" },
         new { Key = "personas", Label = "Personas" },
         new { Key = "perfiles", Label = "Perfiles" },
         new { Key = "accesos", Label = "Accesos" },
@@ -33,7 +34,7 @@
     {
         canCreate = AdministrationPermissions.CanCreate(HttpContext.Session, item.Key),
         canEdit = AdministrationPermissions.CanEdit(HttpContext.Session, item.Key),
-        canDelete = AdministrationPermissions.CanDelete(HttpContext.Session, item.Key)
+        canDelete = item.Key != "sucursales" && AdministrationPermissions.CanDelete(HttpContext.Session, item.Key)
     });
 }
 
@@ -52,6 +53,7 @@
 
         <div id="crud-panel" class="admin-panels">
             @await Html.PartialAsync("_AdminFormularioUsuarios")
+            @await Html.PartialAsync("_AdminFormularioSucursales")
             @await Html.PartialAsync("_AdminFormularioPersonas")
             @await Html.PartialAsync("_AdminFormularioPerfiles")
             @await Html.PartialAsync("_AdminFormularioTransportadoras")
@@ -114,7 +116,7 @@
             module: @Html.Raw(JsonSerializer.Serialize(initialAdminModule)),
             records: [],
             editing: null,
-            options: { perfiles: [], personas: [], maquinas: [], departamentos: [], tiposDocumento: [], productos: [], usuarios: [] },
+            options: { perfiles: [], personas: [], maquinas: [], departamentos: [], tiposDocumento: [], productos: [], usuarios: [], sucursales: [] },
             formularios: [],
             permisos: [],
             search: "",
@@ -351,7 +353,7 @@
                     ${config.columns.map(column => `<td>${escapeHtml(formatValue(record, column))}</td>`).join("")}
                     <td>
                         <div class="admin-row-actions">
-                            ${config.readonly ? "" : `<button type="button" onclick="editRecord('${escapeHtml(record[config.id])}')">Editar</button><button class="danger" type="button" onclick="deleteRecord('${escapeHtml(record[config.id])}')">Eliminar</button>`}
+                            ${config.readonly ? "" : `<button type="button" onclick="editRecord('${escapeHtml(record[config.id])}')">Editar</button>${state.module === "sucursales" ? "" : `<button class="danger" type="button" onclick="deleteRecord('${escapeHtml(record[config.id])}')">Eliminar</button>`}`}
                         </div>
                     </td>
                 </tr>`).join("") : `<tr><td colspan="${config.columns.length + 1}">No hay registros para los filtros seleccionados.</td></tr>`;

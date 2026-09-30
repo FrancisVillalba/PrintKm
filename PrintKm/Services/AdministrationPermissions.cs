@@ -6,7 +6,7 @@ public static class AdministrationPermissions
 {
     private static readonly IReadOnlyDictionary<string, string> ModuleForms = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        ["usuarios"] = "Usuarios", ["personas"] = "Personas", ["perfiles"] = "Perfiles", ["accesos"] = "Accesos",
+        ["sucursales"] = "Usuarios", ["usuarios"] = "Usuarios", ["personas"] = "Personas", ["perfiles"] = "Perfiles", ["accesos"] = "Accesos",
         ["transportadoras"] = "Transportadoras", ["productos"] = "Productos", ["productoComisiones"] = "Comisiones por producto",
         ["gruposVenta"] = "Grupo de ventas", ["maquinas"] = "Tipos de maquina", ["formasPago"] = "Formas de pago",
         ["estadosPago"] = "Estados de pago", ["estadosVenta"] = "Estados de venta", ["tiposDocumento"] = "Tipos documento",

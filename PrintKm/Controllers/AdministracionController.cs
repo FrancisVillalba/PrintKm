@@ -11,6 +11,7 @@ public class AdministracionController : ControllerBase
     private static readonly Dictionary<string, AdminModule> Modules = new(StringComparer.OrdinalIgnoreCase)
     {
         ["usuarios"] = new("api/Usuarios", true, true, true),
+        ["sucursales"] = new("api/Sucursales", true, true, false),
         ["personas"] = new("api/Personas", true, true, true),
         ["perfiles"] = new("api/Perfiles", true, true, true),
         ["transportadoras"] = new("api/Transportadoras", true, true, true),
@@ -39,14 +40,19 @@ public class AdministracionController : ControllerBase
     public async Task<ActionResult<AdminOptionsDto>> GetOptions(CancellationToken cancellationToken)
     {
         var perfilesTask = _backendApiClient.GetAsync<IEnumerable<PerfilDto>>("api/Perfiles", cancellationToken);
-        var personasTask = _backendApiClient.GetAsync<IEnumerable<PersonaDto>>("api/Personas", cancellationToken);
+        var personasEndpoint = AdministrationPermissions.CanView(HttpContext.Session, "usuarios")
+            ? "api/Usuarios/personas" : "api/Personas";
+        var personasTask = _backendApiClient.GetAsync<IEnumerable<PersonaDto>>(personasEndpoint, cancellationToken);
         var maquinasTask = _backendApiClient.GetAsync<IEnumerable<TipoMaquinaDto>>("api/TiposMaquina", cancellationToken);
         var departamentosTask = _backendApiClient.GetAsync<IEnumerable<DepartamentoDto>>("api/Departamentos", cancellationToken);
         var tiposDocumentoTask = _backendApiClient.GetAsync<IEnumerable<CatalogStringDto>>("api/TiposDocumento", cancellationToken);
         var productosTask = _backendApiClient.GetAsync<IEnumerable<ProductoDto>>("api/Productos", cancellationToken);
+        var sucursalesEndpoint = AdministrationPermissions.CanView(HttpContext.Session, "usuarios")
+            ? "api/Usuarios/sucursales" : "api/Sucursales";
+        var sucursalesTask = _backendApiClient.GetAsync<IEnumerable<SucursalDto>>(sucursalesEndpoint, cancellationToken);
         var usuariosTask = _backendApiClient.GetAsync<IEnumerable<UsuarioDto>>("api/Usuarios", cancellationToken);
 
-        await Task.WhenAll(perfilesTask, personasTask, maquinasTask, departamentosTask, tiposDocumentoTask, productosTask, usuariosTask);
+        await Task.WhenAll(perfilesTask, personasTask, maquinasTask, departamentosTask, tiposDocumentoTask, productosTask, usuariosTask, sucursalesTask);
 
         return Ok(new AdminOptionsDto(
             await perfilesTask ?? [],
@@ -55,7 +61,8 @@ public class AdministracionController : ControllerBase
             await departamentosTask ?? [],
             await tiposDocumentoTask ?? [],
             await productosTask ?? [],
-            await usuariosTask ?? []));
+            await usuariosTask ?? [],
+            await sucursalesTask ?? []));
     }
 
     [HttpGet("{module}")]

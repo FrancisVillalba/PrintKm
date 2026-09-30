@@ -104,6 +104,7 @@
                                     <th>Fecha carga</th>
                                     <th>Cliente</th>
                                     <th>Vendedor</th>
+                                    <th>Sucursal</th>
                                     <th>Metros</th>
                                     <th>Estado</th>
                                     <th>Usuario entrega</th>
@@ -314,7 +315,7 @@
 
         function renderOrders() {
             if (!orders.length) {
-                body.innerHTML = `<tr><td colspan="10">No hay pedidos para los filtros seleccionados.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="11">No hay pedidos para los filtros seleccionados.</td></tr>`;
             } else {
                 body.innerHTML = orders.map(order => {
                     const details = Array.isArray(order.details) ? order.details : [];
@@ -325,6 +326,7 @@
                     <td>${escapeHtml(order.date)}</td>
                     <td class="orders-strong">${escapeHtml(order.client)}</td>
                     <td><span class="orders-seller ${sellerColorClass(order.seller)}">${escapeHtml(sellerName)}</span></td>
+                    <td>${escapeHtml(order.sucursal || "Sin asignar")}</td>
                     <td>${escapeHtml(metersFromDetails(details))}</td>
                     <td>${detailStatesMarkup(details)}</td>
                     <td>${escapeHtml(shortPersonName(order.deliveryUser) || "-")}</td>

@@ -49,6 +49,10 @@
                                     Fecha entrega
                                     <input id="order-delivery" required type="date" />
                                 </label>
+                                <label class="field" for="order-sucursal">
+                                    Sucursal
+                                    <input id="order-sucursal" type="text" readonly value="Sin asignar" />
+                                </label>
                                 <label class="order-reposition-check" for="order-reposicion">
                                     Reposición
                                     <input id="order-reposicion" type="checkbox" />
@@ -303,6 +307,13 @@
         const clientSelect2Options = document.getElementById("client-select2-options");
         const paymentMethodSelect = document.getElementById("payment-method");
         const sellerSelect = document.getElementById("order-seller");
+        const branchInput = document.getElementById("order-sucursal");
+        function updateNewOrderBranch() {
+            if (document.getElementById("order-id").value) return;
+            const seller = formOptions.vendedores.find(item => String(item.id) === sellerSelect.value);
+            branchInput.value = seller?.sucursal || "Sin asignar";
+        }
+        sellerSelect.addEventListener("change", updateNewOrderBranch);
         const deliveryMethodSelect = document.getElementById("delivery-method");
         const deliveryUserInput = document.getElementById("delivery-user");
         const paymentStatusSelect = document.getElementById("payment-status");
@@ -1113,6 +1124,8 @@
 
             sellerSelect.disabled = formOptions.vendedores.length <= 1;
 
+            updateNewOrderBranch();
+
             loadedSaleStateId = saleStatusSelect.value;
             renderSaleStatusOptions(saleStatusSelect.value);
         }
@@ -1137,6 +1150,7 @@
             renderClientOptions(order.clientId || "");
             document.getElementById("payment-method").value = order.formaPagoId || "";
             document.getElementById("order-seller").value = order.vendedorId || "";
+            branchInput.value = order.sucursal || "Sin asignar";
             document.getElementById("order-delivery").value = order.delivery || today;
             deliveryMethodSelect.value = order.deliveryMethodId || "DELIVERY";
             savedMontoEnvioTransportadora = numberValue(order.montoEnvioTransportadora || 0) || null;

@@ -46,7 +46,9 @@ public record PedidoView(
     string ProofName,
     string Notes,
     bool Reposicion,
-    List<PedidoDetalleView> Details);
+    List<PedidoDetalleView> Details,
+    int? SucursalId = null,
+    string? Sucursal = null);
 
 public record PedidoDetalleView(
     int Id,

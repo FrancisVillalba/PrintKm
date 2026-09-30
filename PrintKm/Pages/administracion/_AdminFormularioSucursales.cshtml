@@ -1,0 +1,28 @@
+<section class="admin-panel" data-module-panel="sucursales" hidden>
+    <div class="admin-panel-header">
+        <div><h2>Sucursales</h2><p>Administra las sucursales y su estado.</p></div>
+        <button class="admin-primary new-record-button" type="button">Nuevo</button>
+    </div>
+    <form class="admin-form" data-admin-form>
+        <label class="admin-field">Nombre<input data-field="nombre" type="text" maxlength="100" required /></label>
+        <label class="admin-field">Direccion<input data-field="direccion" type="text" maxlength="250" /></label>
+        <label class="admin-check admin-check-field">Activo<input data-field="estado" type="checkbox" checked /></label>
+        <div class="admin-form-actions"><div class="admin-form-buttons">
+            <button class="admin-secondary cancel-record-button" type="button">Cancelar</button>
+            <button class="admin-primary save-record-button" type="button"><span data-save-label>Crear</span></button>
+        </div></div>
+    </form>
+    <partial name="_AdminFormularioTabla" model='@(new[] { "Nombre", "Direccion", "Estado" })' />
+</section>
+<script>
+    window.adminModuleDefinitions = window.adminModuleDefinitions || {};
+    window.adminModuleDefinitions.sucursales = {
+        title: "Sucursales", help: "Administra las sucursales. Desactiva las que ya no operan para conservar el historial.", id: "id",
+        columns: [["nombre", "Nombre"], ["direccion", "Direccion"], ["estado", "Estado", value => value ? "Activa" : "Inactiva"]],
+        fields: [
+            { name: "nombre", label: "Nombre", required: true },
+            { name: "direccion", label: "Direccion" },
+            { name: "estado", label: "Activo", type: "checkbox", defaultValue: true }
+        ]
+    };
+</script>
